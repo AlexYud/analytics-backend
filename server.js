@@ -1,8 +1,8 @@
 const {PORT = 3000} = process.env;
 const path = require('path');
+const assert = require('assert');
 var express = require('express');
 var bodyParser = require('body-parser');
-var hateoas = require("hateoas")({baseUrl: "http://ec2-54-94-33-33.sa-east-1.compute.amazonaws.com:3000"});
 var cors = require('cors');
 var app = express();
 
@@ -63,6 +63,7 @@ class Facility {
 
 var environments = [];
 var environmentIndex = 0;
+ENVIRONMENT_BEACON_PRIORITY_INCONSISTENT = "ENVIRONMENT_BEACON_PRIORITY_INCONSISTENT";
 class Environment {
 	constructor(name, url) {
 		this.id = this.nextId();
@@ -74,7 +75,11 @@ class Environment {
 		environmentIndex++;
 		return environmentIndex;
 	}
-	addBeacon(beacon) {
+	addBeacon(newBeacon) {
+		for(let beacon in this.beacons) {
+			if (beacon.priority == newBeacon.priority)
+				throw new Error(ENVIRONMENT_BEACON_PRIORITY_INCONSISTENT);
+		}
 		this.beacons.push(beacon);
 	}
 	removeBeacon(beacon) {
@@ -92,12 +97,25 @@ const Status = {
 
 var beacons = [];
 var beaconIndex = 0;
+BEACON_UNDEFINED_URL = "BEACON_UNDEFINED_URL";
+BEACON_NULL_URL = "BEACON_NULL_URL";
+BEACON_UNDEFINED_PRIORITY = "BEACON_UNDEFINED_PRIORITY";
+BEACON_NULL_PRIORITY = "BEACON_NULL_PRIORITY";
+BEACON_WRONG_TYPE_PRIORITY = "BEACON_WRONG_TYPE_PRIORITY";
 class Beacon {
-	constructor(publicIdentifier, url, distance) {
+	constructor(publicIdentifier, url, distance, priority) {
 		this.id = publicIdentifier;
 		this.publicIdentifier = publicIdentifier;
+		
+		assert.notEqual(url, undefined, TypeError(BEACON_UNDEFINED_URL));
+		assert.notEqual(url, null, ReferenceError(BEACON_NULL_URL));
 		this.url = url;
 		this.distance = Math.abs(distance);
+
+		assert.notEqual(priority, undefined, TypeError(BEACON_UNDEFINED_PRIORITY));
+		assert.notEqual(priority, null, ReferenceError(BEACON_NULL_PRIORITY));
+		assert.notEqual(Number.parseInt(priority), Number.NaN, ReferenceError(BEACON_WRONG_TYPE_PRIORITY));
+		this.priority = Number.parseInt(priority);
 		this.connectedUsers = 0;
 		this.devices = [];
 		this.connectedDevices = [];
@@ -184,24 +202,41 @@ function BeaconCollectionPatchRoute(request, response, next) {
 app.patch(BEACON_COLLECTION_ROUTE, BeaconCollectionPatchRoute);
 
 function BeaconCollectionPostRoute(request, response, next) {
-	console.log("BeaconCollectionPostRoute");
-	var publicIdentifier = JSON.stringify(request.body.publicIdentifier);
-	publicIdentifier = publicIdentifier.replaceAll("\"", "");
-	console.log("» publicIdentifier: " + publicIdentifier);
-	var url = JSON.stringify(request.body.url);
-	url = url.replaceAll("\"", "");
-	console.log("» url: " + url);
-	var distance = JSON.stringify(request.body.distance);
-	distance = distance.replaceAll("\"", "");
-	console.log("» distance: " + distance);
-	let index = beacons.findIndex(v => v.id == publicIdentifier);
-	var beacon = null;
-	if (index == INVALID_INDEX) {
-		beacon = new Beacon(publicIdentifier, url, distance);
-		beacons.push(beacon);
-	} else
-		beacon = beacons[index];
-	response.json(beacon).status(200).end();
+	try {
+		console.log("BeaconCollectionPostRoute");
+		console.log("TODO Utilizar JSON.stringify apenas uma vez");
+		var publicIdentifier = JSON.stringify(request.body.publicIdentifier);
+		publicIdentifier = publicIdentifier.replaceAll("\"", "");
+		console.log("» publicIdentifier: " + publicIdentifier);
+		var url = JSON.stringify(request.body.url);
+		url = url.replaceAll("\"", "");
+		console.log("» url: " + url);
+		var distance = JSON.stringify(request.body.distance);
+		distance = distance.replaceAll("\"", "");
+		console.log("» distance: " + distance);
+		var priority = JSON.stringify(request.body.priority);
+		priority = priority.replaceAll("\"", "");
+		console.log("» priority: " + priority);
+		let index = beacons.findIndex(v => v.id == publicIdentifier);
+		var beacon = null;
+		if (index == INVALID_INDEX) {
+			beacon = new Beacon(publicIdentifier, url, distance, priority);
+			beacons.push(beacon);
+		} else
+			beacon = beacons[index];
+		response.json(beacon).status(200).end();
+	} catch (error) {
+		let message = {
+			message: error.message
+		};
+		if (error instanceof ReferenceError) {
+			response.json(message).status(400).end();
+		} else if (error instanceof TypeError) {
+			response.json(message).status(400).end();
+		} else {
+			response.json(message).status(400).end();
+		}
+	}
 }
 app.post(BEACON_COLLECTION_ROUTE, BeaconCollectionPostRoute);
 
@@ -843,27 +878,40 @@ function BeaconCollectionByEnvironmentPatchRoute(request, response, next) {
 app.patch(BEACON_COLLECTION_BY_ENVIRONMENT_ROUTE, BeaconCollectionByEnvironmentPatchRoute);
 
 function BeaconCollectionByEnvironmentPostRoute(request, response, next) {
-	console.log("BeaconCollectionByEnvironmentPostRoute");
-	let environment_id = request.params.environment_id;
-	console.log("» environment_id: " + environment_id);
-	let beacon_id = request.body.beacon_id;
-	console.log("» beacon_id: " + beacon_id);
-	
-	let environmentIndex = environments.findIndex(v => v.id == environment_id);	
-	let beaconIndex = beacons.findIndex(v => v.id == beacon_id);
-	if (environments[environmentIndex] == null)
-		response.status(400).end();
-	environments[environmentIndex].beacons.push(beacons[beaconIndex]);
-	
-	for(var merchant of merchants) {
-		for(var facility of merchant.facilities) {
-			let environmentIndex = facility.environments.findIndex(v => v.id == environment_id);
-			if (environmentIndex > 0)
-				facility.environments[environmentIndex].beacons.push(beacons[beaconIndex]);
+	try {
+		console.log("BeaconCollectionByEnvironmentPostRoute");
+		let environment_id = request.params.environment_id;
+		console.log("» environment_id: " + environment_id);
+		let beacon_id = request.body.beacon_id;
+		console.log("» beacon_id: " + beacon_id);
+		
+		let environmentIndex = environments.findIndex(v => v.id == environment_id);	
+		let beaconIndex = beacons.findIndex(v => v.id == beacon_id);
+		if (environments[environmentIndex] == null)
+			response.status(400).end();
+		environments[environmentIndex].beacons.push(beacons[beaconIndex]);
+		
+		for(var merchant of merchants) {
+			for(var facility of merchant.facilities) {
+				let environmentIndex = facility.environments.findIndex(v => v.id == environment_id);
+				if (environmentIndex > 0)
+					facility.environments[environmentIndex].beacons.push(beacons[beaconIndex]);
+			}
+		}
+		
+		response.json(environments[environmentIndex].beacons).status(200).end();
+	} catch (error) {
+		let message = {
+			message: error.message
+		};
+		if (error instanceof ReferenceError) {
+			response.json(message).status(400).end();
+		} else if (error instanceof TypeError) {
+			response.json(message).status(400).end();
+		} else {
+			response.json(message).status(400).end();
 		}
 	}
-	
-	response.json(environments[environmentIndex].beacons).status(200).end();
 }
 app.post(BEACON_COLLECTION_BY_ENVIRONMENT_ROUTE, BeaconCollectionByEnvironmentPostRoute);
 
@@ -1650,49 +1698,57 @@ function BeaconPostRoute (request, response) {
 app.post("/beacon", BeaconPostRoute);
 
 function ServicePostRoute (request, response) {
-        console.log("ServicePostRoute");
-        console.log("» position: " + request.body.distance);
-        console.log("» publicId: " + request.body.id);
-        if (request.body.distance > 1.1) {
-                console.log("» hateoas: " + JSON.stringify(hateoas.link("theme", {id: 2})));
-                response.json(hateoas.link("theme", {id: 2})).status(200).end();
-        } else {
-                console.log("» hateoas: " + JSON.stringify(hateoas.link("theme", {id: 1})));
-                response.json(hateoas.link("theme", {id: 1})).status(200).end();
-        }
+	console.log("ServicePostRoute");
+	console.log("» position: " + request.body.distance);
+	console.log("» publicId: " + request.body.id);
+	if (request.body.distance > 1.1) {
+			console.log("» hateoas: " + JSON.stringify(hateoas.link("theme", {id: 2})));
+			response.json(hateoas.link("theme", {id: 2})).status(200).end();
+	} else {
+			console.log("» hateoas: " + JSON.stringify(hateoas.link("theme", {id: 1})));
+			response.json(hateoas.link("theme", {id: 1})).status(200).end();
+	}
 }
 app.post("/service", ServicePostRoute);
 
-hateoas.registerLinkHandler("root", function() {
-    return {
-        "self": "/",
-        "themes": "/themes"
-    };
-});
-
-hateoas.registerLinkHandler("theme", function(theme) {
-    var links = {
-        "self": "/themes/" + theme.id,
-    };
- 
-    return links;
-});
-
-// TODO Rever
-function ExperiencePostRoute (request, response) {
-        console.log("ExperiencePostRoute");
-        response.json({message:"OK"}).status(200).end();
+// Config
+function ConfigGetRoute (request, response) {
+	var config = {
+		rules: []
+	};
+	for(var merchant of merchants) {
+		for(var facility of merchant.facilities) {
+			for(var environment of facility.environments) {
+				for(var beacon of environment.beacons) {
+					config.rules.push(
+						{
+							"publicIdentifier": beacon.publicIdentifier,
+							"maxDistance": beacon.distance,
+							"url": beacon.url,
+							"environment_url": environment.url,
+							"priority": Number.parseInt(beacon.priority)
+						}
+					);
+				}
+			}
+		}
+	}
+	response.json(config).status(200).end();
 }
-app.post("/experience", ExperiencePostRoute);
+app.get("/config", ConfigGetRoute);
+
+// Theme
+app.set('view engine', 'ejs');
+app.use('/views', express.static(__dirname + '/views'));
 
 function ThemeGetRoute (request, response) {
-        const themeId = request.params.themeId;
-        console.log("ThemeGetRoute");
-        console.log("» themeId: " + themeId);
-        response.sendFile(path.join(__dirname, '/public/' + themeId + '.html'));
+	const themeId = request.params.themeId;
+	console.log("ThemeGetRoute");
+	console.log("» themeId: " + themeId);
+	response.render(themeId + '/index.ejs', {folder:'/views/' + themeId});
 }
 app.get("/themes/:themeId", ThemeGetRoute);
 
 var listener = app.listen(PORT, function () {
-        console.log('Indoor Analytics listening on port ' + listener.address().port);
+	console.log('Indoor Analytics listening on port ' + listener.address().port);
 });
