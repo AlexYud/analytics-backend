@@ -1,4 +1,4 @@
-//export PORT=3000
+const {PORT = 3000} = process.env;
 const path = require('path');
 var express = require('express');
 var bodyParser = require('body-parser');
@@ -1693,6 +1693,6 @@ function ThemeGetRoute (request, response) {
 }
 app.get("/themes/:themeId", ThemeGetRoute);
 
-var listener = app.listen(process.env.PORT, function () {
+var listener = app.listen(PORT, function () {
         console.log('Indoor Analytics listening on port ' + listener.address().port);
 });
