@@ -855,11 +855,16 @@ function BeaconCollectionByEnvironmentGetRoute(request, response, next) {
 	let environment_id = request.params.environment_id;
 	console.log("» environment_id: " + environment_id);
 	let environmentIndex = environments.findIndex(v => v.id == environment_id);
-	if (environmentIndex == INVALID_INDEX)
-		return response.status(400).json({message:"beaconIndex == INVALID_INDEX"});
-	else if (environments[environmentIndex] == null)
+	if (environmentIndex == INVALID_INDEX) {
+		console.log("» RETURN: " + JSON.stringify({message:"environmentIndex == INVALID_INDEX"}));
+		return response.status(400).json({message:"environmentIndex == INVALID_INDEX"});
+	} else if (environments[environmentIndex] == null) {
+		console.log("» RETURN: " + JSON.stringify({message:"environments[environmentIndex] == null"}));
 		return response.status(400).json({message:"environments[environmentIndex] == null"});
-	response.json(environments[environmentIndex].beacons).status(200).end();
+	} else {
+		console.log("» RETURN: " + JSON.stringify(environments[environmentIndex].beacons));
+		response.json(environments[environmentIndex].beacons).status(200).end();
+	}
 }
 app.get(BEACON_COLLECTION_BY_ENVIRONMENT_ROUTE, BeaconCollectionByEnvironmentGetRoute);
 
@@ -879,6 +884,7 @@ app.patch(BEACON_COLLECTION_BY_ENVIRONMENT_ROUTE, BeaconCollectionByEnvironmentP
 
 function BeaconCollectionByEnvironmentPostRoute(request, response, next) {
 	try {
+		
 		console.log("BeaconCollectionByEnvironmentPostRoute");
 		let environment_id = request.params.environment_id;
 		console.log("» environment_id: " + environment_id);
@@ -900,6 +906,7 @@ function BeaconCollectionByEnvironmentPostRoute(request, response, next) {
 		}
 		
 		response.json(environments[environmentIndex].beacons).status(200).end();
+		
 	} catch (error) {
 		let message = {
 			message: error.message
