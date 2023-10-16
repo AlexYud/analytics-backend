@@ -19,6 +19,8 @@ var corsOptionsRoute = {
 app.use(cors(corsOptionsRoute))
 
 /* DOMAIN */
+var distanceMap = [];
+
 const INVALID_INDEX = -1;
 const BEACON_MAX_DISTANCE = 0.5;
 var merchants = [];
@@ -178,6 +180,7 @@ const BEACON_COLLECTION_ROUTE = "/beacons";
 function BeaconCollectionDeleteRoute(request, response, next) {
 	console.log("BeaconCollectionDeleteRoute");
 	beacons = [];
+	distanceMap = [];
 	beaconIndex = 0;
 	response.status(200).end();
 }
@@ -207,16 +210,16 @@ function BeaconCollectionPostRoute(request, response, next) {
 		console.log("TODO Utilizar JSON.stringify apenas uma vez");
 		var publicIdentifier = JSON.stringify(request.body.publicIdentifier);
 		publicIdentifier = publicIdentifier.replaceAll("\"", "");
-		console.log("Â» publicIdentifier: " + publicIdentifier);
+		console.log("» publicIdentifier: " + publicIdentifier);
 		var url = JSON.stringify(request.body.url);
 		url = url.replaceAll("\"", "");
-		console.log("Â» url: " + url);
+		console.log("» url: " + url);
 		var distance = JSON.stringify(request.body.distance);
 		distance = distance.replaceAll("\"", "");
-		console.log("Â» distance: " + distance);
+		console.log("» distance: " + distance);
 		var priority = JSON.stringify(request.body.priority);
 		priority = priority.replaceAll("\"", "");
-		console.log("Â» priority: " + priority);
+		console.log("» priority: " + priority);
 		let index = beacons.findIndex(v => v.id == publicIdentifier);
 		var beacon = null;
 		if (index == INVALID_INDEX) {
@@ -251,7 +254,7 @@ const BEACON_ITEM_ROUTE = "/beacons/:beacon_id";
 function BeaconItemDeleteRoute(request, response, next) {
 	console.log("BeaconItemDeleteRoute");
 	let beacon_id = request.params.beacon_id;
-	console.log("Â» beacon_id: " + beacon_id);
+	console.log("» beacon_id: " + beacon_id);
 	beacons.splice(beacons.findIndex(v => v.id == beacon_id), 1);
 	response.status(200).end();
 }
@@ -260,7 +263,7 @@ app.delete(BEACON_ITEM_ROUTE, BeaconItemDeleteRoute);
 function BeaconItemGetRoute(request, response, next) {
 	console.log("BeaconItemGetRoute");
 	let beacon_id = request.params.beacon_id
-	console.log("Â» beacon_id: " + beacon_id);
+	console.log("» beacon_id: " + beacon_id);
 	let beaconIndex = beacons.findIndex(v => v.id == beacon_id);
 	if (beaconIndex == INVALID_INDEX) {
 		return response.status(400).json({message:"beaconIndex == INVALID_INDEX"});
@@ -272,28 +275,28 @@ app.get(BEACON_ITEM_ROUTE, BeaconItemGetRoute);
 
 function BeaconItemOptionsRoute(request, response, next) {
 	console.log("BeaconItemOptionsRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
 	response.status(200).end();
 }
 app.options(BEACON_ITEM_ROUTE, BeaconItemOptionsRoute);
 
 function BeaconItemPatchRoute(request, response, next) {
 	console.log("BeaconItemPatchRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
 	response.status(200).end();
 }
 app.patch(BEACON_ITEM_ROUTE, BeaconItemPatchRoute);
 
 function BeaconItemPostRoute(request, response, next) {
 	console.log("BeaconItemPostRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
 	response.status(200).end();
 }
 app.post(BEACON_ITEM_ROUTE, BeaconItemPostRoute);
 
 function BeaconItemPutRoute(request, response, next) {
 	console.log("BeaconItemPutRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
 	response.status(200).end();
 }
 app.put(BEACON_ITEM_ROUTE, BeaconItemPutRoute);
@@ -329,7 +332,7 @@ app.patch(DEVICE_COLLECTION_ROUTE, DeviceCollectionPatchRoute);
 function DeviceCollectionPostRoute(request, response, next) {
 	console.log("DeviceCollectionPostRoute");
 	var name = JSON.stringify(request.body.name);
-	console.log("Â» name: " + name);
+	console.log("» name: " + name);
 	if (name == null)
 		return response.json({message:"name == null"}).status(404).end();
 	name = name.replaceAll("\"", "");
@@ -355,7 +358,7 @@ const DEVICE_ITEM_ROUTE = "/devices/:device_id";
 function DeviceItemDeleteRoute(request, response, next) {
 	console.log("DeviceItemDeleteRoute");
 	let device_id = request.params.device_id;
-	console.log("Â» device_id: " + device_id);
+	console.log("» device_id: " + device_id);
 	devices.splice(devices.findIndex(v => v.id == device_id), 1);
 	response.status(200).end();
 }
@@ -364,7 +367,7 @@ app.delete(DEVICE_ITEM_ROUTE, DeviceItemDeleteRoute);
 function DeviceItemGetRoute(request, response, next) {
 	console.log("DeviceItemGetRoute");
 	let device_id = request.params.device_id;
-	console.log("Â» device_id: " + device_id);
+	console.log("» device_id: " + device_id);
 	let index = devices.findIndex(v => v.id == device_id)
 	response.json(devices[index]).status(200).end();
 }
@@ -372,28 +375,28 @@ app.get(DEVICE_ITEM_ROUTE, DeviceItemGetRoute);
 
 function DeviceItemOptionsRoute(request, response, next) {
 	console.log("DeviceItemOptionsRoute");
-	console.log("Â» device_id: " + request.params.device_id);
+	console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.options(DEVICE_ITEM_ROUTE, DeviceItemOptionsRoute);
 
 function DeviceItemPatchRoute(request, response, next) {
 	console.log("DeviceItemPatchRoute");
-	console.log("Â» device_id: " + request.params.device_id);
+	console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.patch(DEVICE_ITEM_ROUTE, DeviceItemPatchRoute);
 
 function DeviceItemPostRoute(request, response, next) {
 	console.log("DeviceItemPostRoute");
-	console.log("Â» device_id: " + request.params.device_id);
+	console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.post(DEVICE_ITEM_ROUTE, DeviceItemPostRoute);
 
 function DeviceItemPutRoute(request, response, next) {
 	console.log("DeviceItemPutRoute");
-	console.log("Â» device_id: " + request.params.device_id);
+	console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.put(DEVICE_ITEM_ROUTE, DeviceItemPutRoute);
@@ -429,10 +432,10 @@ app.patch(ENVIRONMENT_COLLECTION_ROUTE, EnvironmentCollectionPatchRoute);
 function EnvironmentCollectionPostRoute(request, response, next) {
 	console.log("EnvironmentCollectionPostRoute");
 	let name = JSON.stringify(request.body.name);
-	console.log("Â» name: " + name);
+	console.log("» name: " + name);
 	let url = JSON.stringify(request.body.url);
 	url = url.replaceAll("\"", "");
-	console.log("Â» url: " + url);
+	console.log("» url: " + url);
 	var environment = new Environment(name, url);
 	environments.push(environment);
 	response.json(environment).status(200).end();
@@ -450,7 +453,7 @@ const ENVIRONMENT_ITEM_ROUTE = "/environments/:environment_id";
 function EnvironmentItemDeleteRoute(request, response, next) {
 	console.log("EnvironmentItemDeleteRoute");
 	let environment_id = request.params.environment_id;
-	console.log("Â» environment_id: " + environment_id);
+	console.log("» environment_id: " + environment_id);
 	environments.splice(environments.findIndex(v => v.id == environment_id), 1);
 	response.status(200).end();
 }
@@ -458,35 +461,35 @@ app.delete(ENVIRONMENT_ITEM_ROUTE, EnvironmentItemDeleteRoute);
 
 function EnvironmentItemGetRoute(request, response, next) {
 	console.log("EnvironmentItemGetRoute");
-	console.log("Â» environment_id: " + request.params.environment_id);
+	console.log("» environment_id: " + request.params.environment_id);
 	response.status(200).end();
 }
 app.get(ENVIRONMENT_ITEM_ROUTE, EnvironmentItemGetRoute);
 
 function EnvironmentItemOptionsRoute(request, response, next) {
 	console.log("EnvironmentItemOptionsRoute");
-	console.log("Â» environment_id: " + request.params.environment_id);
+	console.log("» environment_id: " + request.params.environment_id);
 	response.status(200).end();
 }
 app.options(ENVIRONMENT_ITEM_ROUTE, EnvironmentItemOptionsRoute);
 
 function EnvironmentItemPatchRoute(request, response, next) {
 	console.log("EnvironmentItemPatchRoute");
-	console.log("Â» environment_id: " + request.params.environment_id);
+	console.log("» environment_id: " + request.params.environment_id);
 	response.status(200).end();
 }
 app.patch(ENVIRONMENT_ITEM_ROUTE, EnvironmentItemPatchRoute);
 
 function EnvironmentItemPostRoute(request, response, next) {
 	console.log("EnvironmentItemPostRoute");
-	console.log("Â» environment_id: " + request.params.environment_id);
+	console.log("» environment_id: " + request.params.environment_id);
 	response.status(200).end();
 }
 app.post(ENVIRONMENT_ITEM_ROUTE, EnvironmentItemPostRoute);
 
 function EnvironmentItemPutRoute(request, response, next) {
 	console.log("EnvironmentItemPutRoute");
-	console.log("Â» environment_id: " + request.params.environment_id);
+	console.log("» environment_id: " + request.params.environment_id);
 	response.status(200).end();
 }
 app.put(ENVIRONMENT_ITEM_ROUTE, EnvironmentItemPutRoute);
@@ -495,7 +498,7 @@ app.put(ENVIRONMENT_ITEM_ROUTE, EnvironmentItemPutRoute);
 const SERVICE_COLLECTION_BY_BEACON_ROUTE = "/beacons/:beacon_id/services";
 function ServiceCollectionByBeaconDeleteRoute(request, response, next) {
 	console.log("ServiceCollectionByBeaconDeleteRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
 	response.status(200).end();
 }
 app.delete(SERVICE_COLLECTION_BY_BEACON_ROUTE, ServiceCollectionByBeaconDeleteRoute);
@@ -503,7 +506,7 @@ app.delete(SERVICE_COLLECTION_BY_BEACON_ROUTE, ServiceCollectionByBeaconDeleteRo
 function ServiceCollectionByBeaconGetRoute(request, response, next) {
 	console.log("ServiceCollectionByBeaconGetRoute");
 	let beacon_id = request.params.beacon_id;
-	console.log("Â» beacon_id: " + beacon_id);
+	console.log("» beacon_id: " + beacon_id);
 	
 	let beaconIndex = beacons.findIndex(v => v.id == beacon_id);
 	if (beaconIndex == INVALID_INDEX)
@@ -515,14 +518,14 @@ app.get(SERVICE_COLLECTION_BY_BEACON_ROUTE, ServiceCollectionByBeaconGetRoute);
 
 function ServiceCollectionByBeaconOptionsRoute(request, response, next) {
 	console.log("ServiceCollectionByBeaconOptionsRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
 	response.status(200).end();
 }
 app.options(SERVICE_COLLECTION_BY_BEACON_ROUTE, ServiceCollectionByBeaconOptionsRoute);
 
 function ServiceCollectionByBeaconPatchRoute(request, response, next) {
 	console.log("ServiceCollectionByBeaconPatchRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
 	response.status(200).end();
 }
 app.patch(SERVICE_COLLECTION_BY_BEACON_ROUTE, ServiceCollectionByBeaconPatchRoute);
@@ -530,10 +533,10 @@ app.patch(SERVICE_COLLECTION_BY_BEACON_ROUTE, ServiceCollectionByBeaconPatchRout
 function ServiceCollectionByBeaconPostRoute(request, response, next) {
 	console.log("ServiceCollectionByBeaconPostRoute");
 	let beacon_id = request.params.beacon_id;
-	console.log("Â» beacon_id: " + beacon_id);	
+	console.log("» beacon_id: " + beacon_id);	
 	var name = request.body.name;
 	name = name.replaceAll("\"", "");
-	console.log("Â» name: " + name);
+	console.log("» name: " + name);
 	
 	let beaconIndex = beacons.findIndex(v => v.id == beacon_id);	
 	if (beaconIndex == INVALID_INDEX)
@@ -571,7 +574,7 @@ app.post(SERVICE_COLLECTION_BY_BEACON_ROUTE, ServiceCollectionByBeaconPostRoute)
 
 function ServiceCollectionByBeaconPutRoute(request, response, next) {
 	console.log("ServiceCollectionByBeaconPutRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
 	response.status(200).end();
 }
 app.put(SERVICE_COLLECTION_BY_BEACON_ROUTE, ServiceCollectionByBeaconPutRoute);
@@ -580,7 +583,7 @@ app.put(SERVICE_COLLECTION_BY_BEACON_ROUTE, ServiceCollectionByBeaconPutRoute);
 const DEVICE_COLLECTION_BY_BEACON_ROUTE = "/beacons/:beacon_id/devices";
 function DeviceCollectionByBeaconDeleteRoute(request, response, next) {
 	console.log("DeviceCollectionByBeaconDeleteRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
 	response.status(200).end();
 }
 app.delete(DEVICE_COLLECTION_BY_BEACON_ROUTE, DeviceCollectionByBeaconDeleteRoute);
@@ -588,7 +591,7 @@ app.delete(DEVICE_COLLECTION_BY_BEACON_ROUTE, DeviceCollectionByBeaconDeleteRout
 function DeviceCollectionByBeaconGetRoute(request, response, next) {
 	console.log("DeviceCollectionByBeaconGetRoute");
 	let beacon_id = request.params.beacon_id;
-	console.log("Â» beacon_id: " + beacon_id);
+	console.log("» beacon_id: " + beacon_id);
 	let index = beacons.findIndex(v => v.id == beacon_id);
 	if (beacons[index] == null)
 		response.status(400).end();
@@ -598,14 +601,14 @@ app.get(DEVICE_COLLECTION_BY_BEACON_ROUTE, DeviceCollectionByBeaconGetRoute);
 
 function DeviceCollectionByBeaconOptionsRoute(request, response, next) {
 	console.log("DeviceCollectionByBeaconOptionsRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
 	response.status(200).end();
 }
 app.options(DEVICE_COLLECTION_BY_BEACON_ROUTE, DeviceCollectionByBeaconOptionsRoute);
 
 function DeviceCollectionByBeaconPatchRoute(request, response, next) {
 	console.log("DeviceCollectionByBeaconPatchRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
 	response.status(200).end();
 }
 app.patch(DEVICE_COLLECTION_BY_BEACON_ROUTE, DeviceCollectionByBeaconPatchRoute);
@@ -613,9 +616,9 @@ app.patch(DEVICE_COLLECTION_BY_BEACON_ROUTE, DeviceCollectionByBeaconPatchRoute)
 function DeviceCollectionByBeaconPostRoute(request, response, next) {
 	console.log("DeviceCollectionByBeaconPostRoute");
 	let beacon_id = request.params.beacon_id;
-	console.log("Â» beacon_id: " + beacon_id);
+	console.log("» beacon_id: " + beacon_id);
 	let device_id = request.body.device_id;
-	console.log("Â» device_id: " + device_id);
+	console.log("» device_id: " + device_id);
 	
 	let beaconIndex = beacons.findIndex(v => v.id == beacon_id);	
 	if (beaconIndex == INVALID_INDEX)
@@ -652,7 +655,7 @@ app.post(DEVICE_COLLECTION_BY_BEACON_ROUTE, DeviceCollectionByBeaconPostRoute);
 
 function DeviceCollectionByBeaconPutRoute(request, response, next) {
 	console.log("DeviceCollectionByBeaconPutRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
 	response.status(200).end();
 }
 app.put(DEVICE_COLLECTION_BY_BEACON_ROUTE, DeviceCollectionByBeaconPutRoute);
@@ -661,42 +664,42 @@ app.put(DEVICE_COLLECTION_BY_BEACON_ROUTE, DeviceCollectionByBeaconPutRoute);
 const DEVICE_ITEM_BY_BEACON_ROUTE = "/beacons/:beacon_id/devices/:device_id";
 function DeviceItemByBeaconDeleteRoute(request, response, next) {
 	console.log("DeviceItemByBeaconDeleteRoute");
-	console.log("Â» device_id: " + request.params.device_id);
+	console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.delete(DEVICE_ITEM_BY_BEACON_ROUTE, DeviceItemByBeaconDeleteRoute);
 
 function DeviceItemByBeaconGetRoute(request, response, next) {
 	console.log("DeviceItemByBeaconGetRoute");
-	console.log("Â» device_id: " + request.params.device_id);
+	console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.get(DEVICE_ITEM_BY_BEACON_ROUTE, DeviceItemByBeaconGetRoute);
 
 function DeviceItemByBeaconOptionsRoute(request, response, next) {
 	console.log("DeviceItemByBeaconOptionsRoute");
-	console.log("Â» device_id: " + request.params.device_id);
+	console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.options(DEVICE_ITEM_BY_BEACON_ROUTE, DeviceItemByBeaconOptionsRoute);
 
 function DeviceItemByBeaconPatchRoute(request, response, next) {
 	console.log("DeviceItemByBeaconPatchRoute");
-	console.log("Â» device_id: " + request.params.device_id);
+	console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.patch(DEVICE_ITEM_BY_BEACON_ROUTE, DeviceItemByBeaconPatchRoute);
 
 function DeviceItemByBeaconPostRoute(request, response, next) {
 	console.log("DeviceItemByBeaconPostRoute");
-	console.log("Â» device_id: " + request.params.device_id);
+	console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.post(DEVICE_ITEM_BY_BEACON_ROUTE, DeviceItemByBeaconPostRoute);
 
 function DeviceItemByBeaconPutRoute(request, response, next) {
 	console.log("DeviceItemByBeaconPutRoute");
-	console.log("Â» device_id: " + request.params.device_id);
+	console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.put(DEVICE_ITEM_BY_BEACON_ROUTE, DeviceItemByBeaconPutRoute);
@@ -705,48 +708,48 @@ app.put(DEVICE_ITEM_BY_BEACON_ROUTE, DeviceItemByBeaconPutRoute);
 const DEVICE_ITEM_STATUS_BY_BEACON_ROUTE = "/beacons/:beacon_id/devices/:device_id/status";
 function DeviceItemStatusByBeaconDeleteRoute(request, response, next) {
 	console.log("DeviceItemStatusByBeaconDeleteRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
-	console.log("Â» device_id: " + request.params.device_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
+	console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.delete(DEVICE_ITEM_STATUS_BY_BEACON_ROUTE, DeviceItemStatusByBeaconDeleteRoute);
 
 function DeviceItemStatusByBeaconGetRoute(request, response, next) {
 	console.log("DeviceItemStatusByBeaconGetRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
-	console.log("Â» device_id: " + request.params.device_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
+	console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.get(DEVICE_ITEM_STATUS_BY_BEACON_ROUTE, DeviceItemStatusByBeaconGetRoute);
 
 function DeviceItemStatusByBeaconOptionsRoute(request, response, next) {
 	console.log("DeviceItemStatusByBeaconOptionsRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
-	console.log("Â» device_id: " + request.params.device_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
+	console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.options(DEVICE_ITEM_STATUS_BY_BEACON_ROUTE, DeviceItemStatusByBeaconOptionsRoute);
 
 function DeviceItemStatusByBeaconPatchRoute(request, response, next) {
 	console.log("DeviceItemStatusByBeaconPatchRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
-	console.log("Â» device_id: " + request.params.device_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
+	console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.patch(DEVICE_ITEM_STATUS_BY_BEACON_ROUTE, DeviceItemStatusByBeaconPatchRoute);
 
 function DeviceItemStatusByBeaconPostRoute(request, response, next) {
 	console.log("DeviceItemStatusByBeaconPostRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
-	console.log("Â» device_id: " + request.params.device_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
+	console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.post(DEVICE_ITEM_STATUS_BY_BEACON_ROUTE, DeviceItemStatusByBeaconPostRoute);
 
 function DeviceItemStatusByBeaconPutRoute(request, response, next) {
 	console.log("DeviceItemStatusByBeaconPutRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
-	console.log("Â» device_id: " + request.params.device_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
+	console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.put(DEVICE_ITEM_STATUS_BY_BEACON_ROUTE, DeviceItemStatusByBeaconPutRoute);
@@ -782,7 +785,7 @@ app.patch(FACILITY_COLLECTION_ROUTE, FacilityCollectionPatchRoute);
 function FacilityCollectionPostRoute(request, response, next) {
 	console.log("FacilityCollectionPostRoute");
 	let name = JSON.stringify(request.body.name);
-	console.log("Â» name: " + name);
+	console.log("» name: " + name);
 	var facility = new Facility(name);
 	facilities.push(facility);
 	response.json(facility).status(200).end();
@@ -800,7 +803,7 @@ const FACILITY_ITEM_ROUTE = "/facilities/:facility_id";
 function FacilityItemDeleteRoute(request, response, next) {
 	console.log("FacilityItemDeleteRoute");
 	let facility_id = request.params.facility_id;
-	console.log("Â» facility_id: " + facility_id);
+	console.log("» facility_id: " + facility_id);
 	facilities.splice(facilities.findIndex(v => v.id == facility_id), 1);
 	response.status(200).end();
 }
@@ -808,35 +811,35 @@ app.delete(FACILITY_ITEM_ROUTE, FacilityItemDeleteRoute);
 
 function FacilityItemGetRoute(request, response, next) {
 	console.log("FacilityItemGetRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
+	console.log("» facility_id: " + request.params.facility_id);
 	response.status(200).end();
 }
 app.get(FACILITY_ITEM_ROUTE, FacilityItemGetRoute);
 
 function FacilityItemOptionsRoute(request, response, next) {
 	console.log("FacilityItemOptionsRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
+	console.log("» facility_id: " + request.params.facility_id);
 	response.status(200).end();
 }
 app.options(FACILITY_ITEM_ROUTE, FacilityItemOptionsRoute);
 
 function FacilityItemPatchRoute(request, response, next) {
 	console.log("FacilityItemPatchRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
+	console.log("» facility_id: " + request.params.facility_id);
 	response.status(200).end();
 }
 app.patch(FACILITY_ITEM_ROUTE, FacilityItemPatchRoute);
 
 function FacilityItemPostRoute(request, response, next) {
 	console.log("FacilityItemPostRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
+	console.log("» facility_id: " + request.params.facility_id);
 	response.status(200).end();
 }
 app.post(FACILITY_ITEM_ROUTE, FacilityItemPostRoute);
 
 function FacilityItemPutRoute(request, response, next) {
 	console.log("FacilityItemPutRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
+	console.log("» facility_id: " + request.params.facility_id);
 	response.status(200).end();
 }
 app.put(FACILITY_ITEM_ROUTE, FacilityItemPutRoute);
@@ -845,7 +848,7 @@ app.put(FACILITY_ITEM_ROUTE, FacilityItemPutRoute);
 const BEACON_COLLECTION_BY_ENVIRONMENT_ROUTE = "/environments/:environment_id/beacons";
 function BeaconCollectionByEnvironmentDeleteRoute(request, response, next) {
 	console.log("BeaconCollectionByEnvironmentDeleteRoute");
-	console.log("Â» environment_id: " + request.params.environment_id);
+	console.log("» environment_id: " + request.params.environment_id);
 	response.status(200).end();
 }
 app.delete(BEACON_COLLECTION_BY_ENVIRONMENT_ROUTE, BeaconCollectionByEnvironmentDeleteRoute);
@@ -853,16 +856,16 @@ app.delete(BEACON_COLLECTION_BY_ENVIRONMENT_ROUTE, BeaconCollectionByEnvironment
 function BeaconCollectionByEnvironmentGetRoute(request, response, next) {
 	console.log("BeaconCollectionByEnvironmentGetRoute");
 	let environment_id = request.params.environment_id;
-	console.log("Â» environment_id: " + environment_id);
+	console.log("» environment_id: " + environment_id);
 	let environmentIndex = environments.findIndex(v => v.id == environment_id);
 	if (environmentIndex == INVALID_INDEX) {
-		console.log("Â» RETURN: " + JSON.stringify({message:"environmentIndex == INVALID_INDEX"}));
+		console.log("» RETURN: " + JSON.stringify({message:"environmentIndex == INVALID_INDEX"}));
 		return response.status(400).json({message:"environmentIndex == INVALID_INDEX"});
 	} else if (environments[environmentIndex] == null) {
-		console.log("Â» RETURN: " + JSON.stringify({message:"environments[environmentIndex] == null"}));
+		console.log("» RETURN: " + JSON.stringify({message:"environments[environmentIndex] == null"}));
 		return response.status(400).json({message:"environments[environmentIndex] == null"});
 	} else {
-		console.log("Â» RETURN: " + JSON.stringify(environments[environmentIndex].beacons));
+		console.log("» RETURN: " + JSON.stringify(environments[environmentIndex].beacons));
 		response.json(environments[environmentIndex].beacons).status(200).end();
 	}
 }
@@ -870,14 +873,14 @@ app.get(BEACON_COLLECTION_BY_ENVIRONMENT_ROUTE, BeaconCollectionByEnvironmentGet
 
 function BeaconCollectionByEnvironmentOptionsRoute(request, response, next) {
 	console.log("BeaconCollectionByEnvironmentOptionsRoute");
-	console.log("Â» environment_id: " + request.params.environment_id);
+	console.log("» environment_id: " + request.params.environment_id);
 	response.status(200).end();
 }
 app.options(BEACON_COLLECTION_BY_ENVIRONMENT_ROUTE, BeaconCollectionByEnvironmentOptionsRoute);
 
 function BeaconCollectionByEnvironmentPatchRoute(request, response, next) {
 	console.log("BeaconCollectionByEnvironmentPatchRoute");
-	console.log("Â» environment_id: " + request.params.environment_id);
+	console.log("» environment_id: " + request.params.environment_id);
 	response.status(200).end();
 }
 app.patch(BEACON_COLLECTION_BY_ENVIRONMENT_ROUTE, BeaconCollectionByEnvironmentPatchRoute);
@@ -887,9 +890,9 @@ function BeaconCollectionByEnvironmentPostRoute(request, response, next) {
 		
 		console.log("BeaconCollectionByEnvironmentPostRoute");
 		let environment_id = request.params.environment_id;
-		console.log("Â» environment_id: " + environment_id);
+		console.log("» environment_id: " + environment_id);
 		let beacon_id = request.body.beacon_id;
-		console.log("Â» beacon_id: " + beacon_id);
+		console.log("» beacon_id: " + beacon_id);
 		
 		let environmentIndex = environments.findIndex(v => v.id == environment_id);	
 		let beaconIndex = beacons.findIndex(v => v.id == beacon_id);
@@ -924,7 +927,7 @@ app.post(BEACON_COLLECTION_BY_ENVIRONMENT_ROUTE, BeaconCollectionByEnvironmentPo
 
 function BeaconCollectionByEnvironmentPutRoute(request, response, next) {
 	console.log("BeaconCollectionByEnvironmentPutRoute");
-	console.log("Â» environment_id: " + request.params.environment_id);
+	console.log("» environment_id: " + request.params.environment_id);
 	response.status(200).end();
 }
 app.put(BEACON_COLLECTION_BY_ENVIRONMENT_ROUTE, BeaconCollectionByEnvironmentPutRoute);
@@ -933,48 +936,48 @@ app.put(BEACON_COLLECTION_BY_ENVIRONMENT_ROUTE, BeaconCollectionByEnvironmentPut
 const BEACON_ITEM_BY_ENVIRONMENT_ROUTE = "/environments/:environment_id/beacons/:beacon_id";
 function BeaconItemByEnvironmentDeleteRoute(request, response, next) {
 	console.log("BeaconItemByEnvironmentDeleteRoute");
-	console.log("Â» environment_id: " + request.params.environment_id);
-	console.log("Â» beacon_id: " + request.params.beacon_id);
+	console.log("» environment_id: " + request.params.environment_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
 	response.status(200).end();
 }
 app.delete(BEACON_ITEM_BY_ENVIRONMENT_ROUTE, BeaconItemByEnvironmentDeleteRoute);
 
 function BeaconItemByEnvironmentGetRoute(request, response, next) {
 	console.log("BeaconItemByEnvironmentGetRoute");
-	console.log("Â» environment_id: " + request.params.environment_id);
-	console.log("Â» beacon_id: " + request.params.beacon_id);
+	console.log("» environment_id: " + request.params.environment_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
 	response.status(200).end();
 }
 app.get(BEACON_ITEM_BY_ENVIRONMENT_ROUTE, BeaconItemByEnvironmentGetRoute);
 
 function BeaconItemByEnvironmentOptionsRoute(request, response, next) {
 	console.log("BeaconItemByEnvironmentOptionsRoute");
-	console.log("Â» environment_id: " + request.params.environment_id);
-	console.log("Â» beacon_id: " + request.params.beacon_id);
+	console.log("» environment_id: " + request.params.environment_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
 	response.status(200).end();
 }
 app.options(BEACON_ITEM_BY_ENVIRONMENT_ROUTE, BeaconItemByEnvironmentOptionsRoute);
 
 function BeaconItemByEnvironmentPatchRoute(request, response, next) {
 	console.log("BeaconItemByEnvironmentPatchRoute");
-	console.log("Â» environment_id: " + request.params.environment_id);
-	console.log("Â» beacon_id: " + request.params.beacon_id);
+	console.log("» environment_id: " + request.params.environment_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
 	response.status(200).end();
 }
 app.patch(BEACON_ITEM_BY_ENVIRONMENT_ROUTE, BeaconItemByEnvironmentPatchRoute);
 
 function BeaconItemByEnvironmentPostRoute(request, response, next) {
 	console.log("BeaconItemByEnvironmentPostRoute");
-	console.log("Â» environment_id: " + request.params.environment_id);
-	console.log("Â» beacon_id: " + request.params.beacon_id);
+	console.log("» environment_id: " + request.params.environment_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
 	response.status(200).end();
 }
 app.post(BEACON_ITEM_BY_ENVIRONMENT_ROUTE, BeaconItemByEnvironmentPostRoute);
 
 function BeaconItemByEnvironmentPutRoute(request, response, next) {
 	console.log("BeaconItemByEnvironmentPutRoute");
-	console.log("Â» environment_id: " + request.params.environment_id);
-	console.log("Â» beacon_id: " + request.params.beacon_id);
+	console.log("» environment_id: " + request.params.environment_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
 	response.status(200).end();
 }
 app.put(BEACON_ITEM_BY_ENVIRONMENT_ROUTE, BeaconItemByEnvironmentPutRoute);
@@ -983,7 +986,7 @@ app.put(BEACON_ITEM_BY_ENVIRONMENT_ROUTE, BeaconItemByEnvironmentPutRoute);
 const ENVIRONMENT_COLLECTION_BY_FACILITY_ROUTE = "/facilities/:facility_id/environments";
 function EnvironmentCollectionByFacilityDeleteRoute(request, response, next) {
 	console.log("EnvironmentCollectionByFacilityDeleteRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
+	console.log("» facility_id: " + request.params.facility_id);
 	response.status(200).end();
 }
 app.delete(ENVIRONMENT_COLLECTION_BY_FACILITY_ROUTE, EnvironmentCollectionByFacilityDeleteRoute);
@@ -991,7 +994,7 @@ app.delete(ENVIRONMENT_COLLECTION_BY_FACILITY_ROUTE, EnvironmentCollectionByFaci
 function EnvironmentCollectionByFacilityGetRoute(request, response, next) {
 	console.log("EnvironmentCollectionByFacilityGetRoute");
 	let facility_id = request.params.facility_id;
-	console.log("Â» facility_id: " + facility_id);
+	console.log("» facility_id: " + facility_id);
 	let index = facilities.findIndex(v => v.id == facility_id);
 	response.json(facilities[index].environments).status(200).end();
 }
@@ -999,14 +1002,14 @@ app.get(ENVIRONMENT_COLLECTION_BY_FACILITY_ROUTE, EnvironmentCollectionByFacilit
 
 function EnvironmentCollectionByFacilityOptionsRoute(request, response, next) {
 	console.log("EnvironmentCollectionByFacilityOptionsRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
+	console.log("» facility_id: " + request.params.facility_id);
 	response.status(200).end();
 }
 app.options(ENVIRONMENT_COLLECTION_BY_FACILITY_ROUTE, EnvironmentCollectionByFacilityOptionsRoute);
 
 function EnvironmentCollectionByFacilityPatchRoute(request, response, next) {
 	console.log("EnvironmentCollectionByFacilityPatchRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
+	console.log("» facility_id: " + request.params.facility_id);
 	response.status(200).end();
 }
 app.patch(ENVIRONMENT_COLLECTION_BY_FACILITY_ROUTE, EnvironmentCollectionByFacilityPatchRoute);
@@ -1014,9 +1017,9 @@ app.patch(ENVIRONMENT_COLLECTION_BY_FACILITY_ROUTE, EnvironmentCollectionByFacil
 function EnvironmentCollectionByFacilityPostRoute(request, response, next) {
 	console.log("EnvironmentCollectionByFacilityPostRoute");
 	let facility_id = request.params.facility_id;
-	console.log("Â» facility_id: " + facility_id);
+	console.log("» facility_id: " + facility_id);
 	let environment_id = request.body.environment_id;
-	console.log("Â» environment_id: " + environment_id);
+	console.log("» environment_id: " + environment_id);
 	
 	let facilityIndex = facilities.findIndex(v => v.id == facility_id);	
 	let environmentIndex = environments.findIndex(v => v.id == environment_id);
@@ -1037,7 +1040,7 @@ app.post(ENVIRONMENT_COLLECTION_BY_FACILITY_ROUTE, EnvironmentCollectionByFacili
 
 function EnvironmentCollectionByFacilityPutRoute(request, response, next) {
 	console.log("EnvironmentCollectionByFacilityPutRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
+	console.log("» facility_id: " + request.params.facility_id);
 	response.status(200).end();
 }
 app.put(ENVIRONMENT_COLLECTION_BY_FACILITY_ROUTE, EnvironmentCollectionByFacilityPutRoute);
@@ -1046,48 +1049,48 @@ app.put(ENVIRONMENT_COLLECTION_BY_FACILITY_ROUTE, EnvironmentCollectionByFacilit
 const ENVIRONMENT_ITEM_BY_FACILITY_ROUTE = "/facilities/:facility_id/environments/:environment_id";
 function EnvironmentItemByFacilityDeleteRoute(request, response, next) {
 	console.log("EnvironmentItemByFacilityDeleteRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
-	console.log("Â» environment_id: " + request.params.environment_id);
+	console.log("» facility_id: " + request.params.facility_id);
+	console.log("» environment_id: " + request.params.environment_id);
 	response.status(200).end();
 }
 app.delete(ENVIRONMENT_ITEM_BY_FACILITY_ROUTE, EnvironmentItemByFacilityDeleteRoute);
 
 function EnvironmentItemByFacilityGetRoute(request, response, next) {
 	console.log("EnvironmentItemByFacilityGetRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
-	console.log("Â» environment_id: " + request.params.environment_id);
+	console.log("» facility_id: " + request.params.facility_id);
+	console.log("» environment_id: " + request.params.environment_id);
 	response.status(200).end();
 }
 app.get(ENVIRONMENT_ITEM_BY_FACILITY_ROUTE, EnvironmentItemByFacilityGetRoute);
 
 function EnvironmentItemByFacilityOptionsRoute(request, response, next) {
 	console.log("EnvironmentItemByFacilityOptionsRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
-	console.log("Â» environment_id: " + request.params.environment_id);
+	console.log("» facility_id: " + request.params.facility_id);
+	console.log("» environment_id: " + request.params.environment_id);
 	response.status(200).end();
 }
 app.options(ENVIRONMENT_ITEM_BY_FACILITY_ROUTE, EnvironmentItemByFacilityOptionsRoute);
 
 function EnvironmentItemByFacilityPatchRoute(request, response, next) {
 	console.log("EnvironmentItemByFacilityPatchRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
-	console.log("Â» environment_id: " + request.params.environment_id);
+	console.log("» facility_id: " + request.params.facility_id);
+	console.log("» environment_id: " + request.params.environment_id);
 	response.status(200).end();
 }
 app.patch(ENVIRONMENT_ITEM_BY_FACILITY_ROUTE, EnvironmentItemByFacilityPatchRoute);
 
 function EnvironmentItemByFacilityPostRoute(request, response, next) {
 	console.log("EnvironmentItemByFacilityPostRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
-	console.log("Â» environment_id: " + request.params.environment_id);
+	console.log("» facility_id: " + request.params.facility_id);
+	console.log("» environment_id: " + request.params.environment_id);
 	response.status(200).end();
 }
 app.post(ENVIRONMENT_ITEM_BY_FACILITY_ROUTE, EnvironmentItemByFacilityPostRoute);
 
 function EnvironmentItemByFacilityPutRoute(request, response, next) {
 	console.log("EnvironmentItemByFacilityPutRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
-	console.log("Â» environment_id: " + request.params.environment_id);
+	console.log("» facility_id: " + request.params.facility_id);
+	console.log("» environment_id: " + request.params.environment_id);
 	response.status(200).end();
 }
 app.put(ENVIRONMENT_ITEM_BY_FACILITY_ROUTE, EnvironmentItemByFacilityPutRoute);
@@ -1123,7 +1126,7 @@ app.patch(MERCHANT_COLLECTION_ROUTE, MerchantCollectionPatchRoute);
 function MerchantCollectionPostRoute(request, response, next) {
 	console.log("MerchantCollectionPostRoute");
 	let name = JSON.stringify(request.body.name);
-	console.log("Â» name: " + name);
+	console.log("» name: " + name);
 	var merchant = new Merchant(name);
 	merchants.push(merchant);
 	response.json(merchant).status(200).end();
@@ -1141,7 +1144,7 @@ const MERCHANT_ITEM_ROUTE = "/merchants/:merchant_id";
 function MerchantItemDeleteRoute(request, response, next) {
 	console.log("MerchantItemDeleteRoute");
 	let merchant_id = request.params.merchant_id;
-	console.log("Â» merchant_id: " + merchant_id);
+	console.log("» merchant_id: " + merchant_id);
 	merchants.splice(merchants.findIndex(v => v.id == merchant_id), 1);
 	response.status(200).end();
 }
@@ -1150,7 +1153,7 @@ app.delete(MERCHANT_ITEM_ROUTE, MerchantItemDeleteRoute);
 function MerchantItemGetRoute(request, response, next) {
 	console.log("MerchantItemGetRoute");
 	let merchant_id = request.params.merchant_id;
-	console.log("Â» merchant_id: " + merchant_id);
+	console.log("» merchant_id: " + merchant_id);
 	let index = merchants.findIndex(v => v.id == merchant_id);
 	response.json(merchants[index]).status(200).end();
 }
@@ -1158,28 +1161,28 @@ app.get(MERCHANT_ITEM_ROUTE, MerchantItemGetRoute);
 
 function MerchantItemOptionsRoute(request, response, next) {
 	console.log("MerchantItemOptionsRoute");
-	console.log("Â» merchant_id: " + request.params.merchant_id);
+	console.log("» merchant_id: " + request.params.merchant_id);
 	response.status(200).end();
 }
 app.options(MERCHANT_ITEM_ROUTE, MerchantItemOptionsRoute);
 
 function MerchantItemPatchRoute(request, response, next) {
 	console.log("MerchantItemPatchRoute");
-	console.log("Â» merchant_id: " + request.params.merchant_id);
+	console.log("» merchant_id: " + request.params.merchant_id);
 	response.status(200).end();
 }
 app.patch(MERCHANT_ITEM_ROUTE, MerchantItemPatchRoute);
 
 function MerchantItemPostRoute(request, response, next) {
 	console.log("MerchantItemPostRoute");
-	console.log("Â» merchant_id: " + request.params.merchant_id);
+	console.log("» merchant_id: " + request.params.merchant_id);
 	response.status(200).end();
 }
 app.post(MERCHANT_ITEM_ROUTE, MerchantItemPostRoute);
 
 function MerchantItemPutRoute(request, response, next) {
 	console.log("MerchantItemPutRoute");
-	console.log("Â» merchant_id: " + request.params.merchant_id);
+	console.log("» merchant_id: " + request.params.merchant_id);
 	response.status(200).end();
 }
 app.put(MERCHANT_ITEM_ROUTE, MerchantItemPutRoute);
@@ -1188,7 +1191,7 @@ app.put(MERCHANT_ITEM_ROUTE, MerchantItemPutRoute);
 const FACILITY_COLLECTION_BY_MERCHANT_ROUTE = "/merchants/:merchant_id/facilities";
 function FacilityCollectionByMerchantDeleteRoute(request, response, next) {
 	console.log("FacilityCollectionByMerchantDeleteRoute");
-	console.log("Â» merchant_id: " + request.params.merchant_id);
+	console.log("» merchant_id: " + request.params.merchant_id);
 	response.status(200).end();
 }
 app.delete(FACILITY_COLLECTION_BY_MERCHANT_ROUTE, FacilityCollectionByMerchantDeleteRoute);
@@ -1196,7 +1199,7 @@ app.delete(FACILITY_COLLECTION_BY_MERCHANT_ROUTE, FacilityCollectionByMerchantDe
 function FacilityCollectionByMerchantGetRoute(request, response, next) {
 	console.log("FacilityCollectionByMerchantGetRoute");
 	let merchant_id = request.params.merchant_id;
-	console.log("Â» merchant_id: " + merchant_id);
+	console.log("» merchant_id: " + merchant_id);
 	let index = merchants.findIndex(v => v.id == merchant_id);
 	if (merchants[index] == null)
 		response.status(400).end();
@@ -1206,14 +1209,14 @@ app.get(FACILITY_COLLECTION_BY_MERCHANT_ROUTE, FacilityCollectionByMerchantGetRo
 
 function FacilityCollectionByMerchantOptionsRoute(request, response, next) {
 	console.log("FacilityCollectionByMerchantOptionsRoute");
-	console.log("Â» merchant_id: " + request.params.merchant_id);
+	console.log("» merchant_id: " + request.params.merchant_id);
 	response.status(200).end();
 }
 app.options(FACILITY_COLLECTION_BY_MERCHANT_ROUTE, FacilityCollectionByMerchantOptionsRoute);
 
 function FacilityCollectionByMerchantPatchRoute(request, response, next) {
 	console.log("FacilityCollectionByMerchantPatchRoute");
-	console.log("Â» merchant_id: " + request.params.merchant_id);
+	console.log("» merchant_id: " + request.params.merchant_id);
 	response.status(200).end();
 }
 app.patch(FACILITY_COLLECTION_BY_MERCHANT_ROUTE, FacilityCollectionByMerchantPatchRoute);
@@ -1221,9 +1224,9 @@ app.patch(FACILITY_COLLECTION_BY_MERCHANT_ROUTE, FacilityCollectionByMerchantPat
 function FacilityCollectionByMerchantPostRoute(request, response, next) {
 	console.log("FacilityCollectionByMerchantPostRoute");
 	let merchant_id = request.params.merchant_id;
-	console.log("Â» merchant_id: " + merchant_id);
+	console.log("» merchant_id: " + merchant_id);
 	let facility_id = request.body.facility_id;
-	console.log("Â» facility_id: " + facility_id);
+	console.log("» facility_id: " + facility_id);
 
 	let merchantIndex = merchants.findIndex(v => v.id == merchant_id);
 	let facilityIndex = facilities.findIndex(v => v.id == facility_id);
@@ -1235,7 +1238,7 @@ app.post(FACILITY_COLLECTION_BY_MERCHANT_ROUTE, FacilityCollectionByMerchantPost
 
 function FacilityCollectionByMerchantPutRoute(request, response, next) {
 	console.log("FacilityCollectionByMerchantPutRoute");
-	console.log("Â» merchant_id: " + request.params.merchant_id);
+	console.log("» merchant_id: " + request.params.merchant_id);
 	response.status(200).end();
 }
 app.put(FACILITY_COLLECTION_BY_MERCHANT_ROUTE, FacilityCollectionByMerchantPutRoute);
@@ -1244,48 +1247,48 @@ app.put(FACILITY_COLLECTION_BY_MERCHANT_ROUTE, FacilityCollectionByMerchantPutRo
 const FACILITY_ITEM_BY_MERCHANT_ROUTE = "/merchants/:merchant_id/facilities/:facility_id";
 function FacilityItemByMerchantDeleteRoute(request, response, next) {
 	console.log("FacilityItemByMerchantDeleteRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
-	console.log("Â» merchant_id: " + request.params.merchant_id);
+	console.log("» facility_id: " + request.params.facility_id);
+	console.log("» merchant_id: " + request.params.merchant_id);
 	response.status(200).end();
 }
 app.delete(FACILITY_ITEM_BY_MERCHANT_ROUTE, FacilityItemByMerchantDeleteRoute);
 
 function FacilityItemByMerchantGetRoute(request, response, next) {
 	console.log("FacilityItemByMerchantGetRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
-	console.log("Â» merchant_id: " + request.params.merchant_id);
+	console.log("» facility_id: " + request.params.facility_id);
+	console.log("» merchant_id: " + request.params.merchant_id);
 	response.status(200).end();
 }
 app.get(FACILITY_ITEM_BY_MERCHANT_ROUTE, FacilityItemByMerchantGetRoute);
 
 function FacilityItemByMerchantOptionsRoute(request, response, next) {
 	console.log("FacilityItemByMerchantOptionsRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
-	console.log("Â» merchant_id: " + request.params.merchant_id);
+	console.log("» facility_id: " + request.params.facility_id);
+	console.log("» merchant_id: " + request.params.merchant_id);
 	response.status(200).end();
 }
 app.options(FACILITY_ITEM_BY_MERCHANT_ROUTE, FacilityItemByMerchantOptionsRoute);
 
 function FacilityItemByMerchantPatchRoute(request, response, next) {
 	console.log("FacilityItemByMerchantPatchRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
-	console.log("Â» merchant_id: " + request.params.merchant_id);
+	console.log("» facility_id: " + request.params.facility_id);
+	console.log("» merchant_id: " + request.params.merchant_id);
 	response.status(200).end();
 }
 app.patch(FACILITY_ITEM_BY_MERCHANT_ROUTE, FacilityItemByMerchantPatchRoute);
 
 function FacilityItemByMerchantPostRoute(request, response, next) {
 	console.log("FacilityItemByMerchantPostRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
-	console.log("Â» merchant_id: " + request.params.merchant_id);
+	console.log("» facility_id: " + request.params.facility_id);
+	console.log("» merchant_id: " + request.params.merchant_id);
 	response.status(200).end();
 }
 app.post(FACILITY_ITEM_BY_MERCHANT_ROUTE, FacilityItemByMerchantPostRoute);
 
 function FacilityItemByMerchantPutRoute(request, response, next) {
 	console.log("FacilityItemByMerchantPutRoute");
-	console.log("Â» facility_id: " + request.params.facility_id);
-	console.log("Â» merchant_id: " + request.params.merchant_id);
+	console.log("» facility_id: " + request.params.facility_id);
+	console.log("» merchant_id: " + request.params.merchant_id);
 	response.status(200).end();
 }
 app.put(FACILITY_ITEM_BY_MERCHANT_ROUTE, FacilityItemByMerchantPutRoute);
@@ -1294,28 +1297,28 @@ app.put(FACILITY_ITEM_BY_MERCHANT_ROUTE, FacilityItemByMerchantPutRoute);
 const DEVICE_COLLECTION_BY_BEACON_SERVICE_ROUTE = "/beacons/:beacon_id/services/:service_id/devices";
 function DeviceCollectionByServiceDeleteRoute(request, response, next) {
 	console.log("DeviceCollectionByServiceDeleteRoute");
-	console.log("Â» service_id: " + request.params.service_id);
+	console.log("» service_id: " + request.params.service_id);
 	response.status(200).end();
 }
 app.delete(DEVICE_COLLECTION_BY_BEACON_SERVICE_ROUTE, DeviceCollectionByServiceDeleteRoute);
 
 function DeviceCollectionByServiceGetRoute(request, response, next) {
 	console.log("DeviceCollectionByServiceGetRoute");
-	console.log("Â» service_id: " + request.params.service_id);
+	console.log("» service_id: " + request.params.service_id);
 	response.status(200).end();
 }
 app.get(DEVICE_COLLECTION_BY_BEACON_SERVICE_ROUTE, DeviceCollectionByServiceGetRoute);
 
 function DeviceCollectionByServiceOptionsRoute(request, response, next) {
 	console.log("DeviceCollectionByServiceOptionsRoute");
-	console.log("Â» service_id: " + request.params.service_id);
+	console.log("» service_id: " + request.params.service_id);
 	response.status(200).end();
 }
 app.options(DEVICE_COLLECTION_BY_BEACON_SERVICE_ROUTE, DeviceCollectionByServiceOptionsRoute);
 
 function DeviceCollectionByServicePatchRoute(request, response, next) {
 	console.log("DeviceCollectionByServicePatchRoute");
-	console.log("Â» service_id: " + request.params.service_id);
+	console.log("» service_id: " + request.params.service_id);
 	response.status(200).end();
 }
 app.patch(DEVICE_COLLECTION_BY_BEACON_SERVICE_ROUTE, DeviceCollectionByServicePatchRoute);
@@ -1323,11 +1326,11 @@ app.patch(DEVICE_COLLECTION_BY_BEACON_SERVICE_ROUTE, DeviceCollectionByServicePa
 function DeviceCollectionByServicePostRoute(request, response, next) {
 	console.log("DeviceCollectionByServicePostRoute");
 	let beacon_id = request.params.beacon_id;
-	console.log("Â» beacon_id: " + beacon_id);
+	console.log("» beacon_id: " + beacon_id);
 	let service_id = request.params.service_id;
-	console.log("Â» service_id: " + service_id);
+	console.log("» service_id: " + service_id);
 	let device_id = request.body.device_id;
-	console.log("Â» device_id: " + device_id);
+	console.log("» device_id: " + device_id);
 	
 	let beaconIndex = beacons.findIndex(v => v.id == beacon_id);	
 	if (beaconIndex == INVALID_INDEX)
@@ -1371,7 +1374,7 @@ app.post(DEVICE_COLLECTION_BY_BEACON_SERVICE_ROUTE, DeviceCollectionByServicePos
 
 function DeviceCollectionByServicePutRoute(request, response, next) {
 	console.log("DeviceCollectionByServicePutRoute");
-	console.log("Â» service_id: " + request.params.service_id);
+	console.log("» service_id: " + request.params.service_id);
 	response.status(200).end();
 }
 app.put(DEVICE_COLLECTION_BY_BEACON_SERVICE_ROUTE, DeviceCollectionByServicePutRoute);
@@ -1380,48 +1383,48 @@ app.put(DEVICE_COLLECTION_BY_BEACON_SERVICE_ROUTE, DeviceCollectionByServicePutR
 const DEVICE_ITEM_BY_BEACON_SERVICE_BEACON_ROUTE = "/beacons/:beacon_id/services/:service_id/devices/:device_id";
 function DeviceItemByServiceDeleteRoute(request, response, next) {
 	console.log("DeviceItemByServiceDeleteRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
 	response.status(200).end();
 }
 app.delete(DEVICE_ITEM_BY_BEACON_SERVICE_BEACON_ROUTE, DeviceItemByServiceDeleteRoute);
 
 function DeviceItemByServiceGetRoute(request, response, next) {
 	console.log("DeviceItemByServiceGetRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
 	response.status(200).end();
 }
 app.get(DEVICE_ITEM_BY_BEACON_SERVICE_BEACON_ROUTE, DeviceItemByServiceGetRoute);
 
 function DeviceItemByServiceOptionsRoute(request, response, next) {
 	console.log("DeviceItemByServiceOptionsRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
 	response.status(200).end();
 }
 app.options(DEVICE_ITEM_BY_BEACON_SERVICE_BEACON_ROUTE, DeviceItemByServiceOptionsRoute);
 
 function DeviceItemByServicePatchRoute(request, response, next) {
 	console.log("DeviceItemByServicePatchRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
 	response.status(200).end();
 }
 app.patch(DEVICE_ITEM_BY_BEACON_SERVICE_BEACON_ROUTE, DeviceItemByServicePatchRoute);
 
 function DeviceItemByServicePostRoute(request, response, next) {
 	console.log("DeviceItemByServicePostRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
 	response.status(200).end();
 }
 app.post(DEVICE_ITEM_BY_BEACON_SERVICE_BEACON_ROUTE, DeviceItemByServicePostRoute);
 
 function DeviceItemByServicePutRoute(request, response, next) {
 	console.log("DeviceItemByServicePutRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
 	response.status(200).end();
 }
 app.put(DEVICE_ITEM_BY_BEACON_SERVICE_BEACON_ROUTE, DeviceItemByServicePutRoute);
@@ -1430,48 +1433,48 @@ app.put(DEVICE_ITEM_BY_BEACON_SERVICE_BEACON_ROUTE, DeviceItemByServicePutRoute)
 const SESSION_COLLECTION_BY_SERVICE_DEVICE_ROUTE = "/services/:service_id/devices/:device_id/sessions";
 function DeviceCollectionByServiceDeviceDeleteRoute(request, response, next) {
 	console.log("DeviceCollectionByServiceDeviceDeleteRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
 	response.status(200).end();
 }
 app.delete(SESSION_COLLECTION_BY_SERVICE_DEVICE_ROUTE, DeviceCollectionByServiceDeviceDeleteRoute);
 
 function DeviceCollectionByServiceDeviceGetRoute(request, response, next) {
 	console.log("DeviceCollectionByServiceDeviceGetRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
 	response.status(200).end();
 }
 app.get(SESSION_COLLECTION_BY_SERVICE_DEVICE_ROUTE, DeviceCollectionByServiceDeviceGetRoute);
 
 function DeviceCollectionByServiceDeviceOptionsRoute(request, response, next) {
 	console.log("DeviceCollectionByServiceDeviceOptionsRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
 	response.status(200).end();
 }
 app.options(SESSION_COLLECTION_BY_SERVICE_DEVICE_ROUTE, DeviceCollectionByServiceDeviceOptionsRoute);
 
 function DeviceCollectionByServiceDevicePatchRoute(request, response, next) {
 	console.log("DeviceCollectionByServiceDevicePatchRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
 	response.status(200).end();
 }
 app.patch(SESSION_COLLECTION_BY_SERVICE_DEVICE_ROUTE, DeviceCollectionByServiceDevicePatchRoute);
 
 function DeviceCollectionByServiceDevicePostRoute(request, response, next) {
 	console.log("DeviceCollectionByServiceDevicePostRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
 	response.status(200).end();
 }
 app.post(SESSION_COLLECTION_BY_SERVICE_DEVICE_ROUTE, DeviceCollectionByServiceDevicePostRoute);
 
 function DeviceCollectionByServiceDevicePutRoute(request, response, next) {
 	console.log("DeviceCollectionByServiceDevicePutRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
 	response.status(200).end();
 }
 app.put(SESSION_COLLECTION_BY_SERVICE_DEVICE_ROUTE, DeviceCollectionByServiceDevicePutRoute);
@@ -1480,54 +1483,54 @@ app.put(SESSION_COLLECTION_BY_SERVICE_DEVICE_ROUTE, DeviceCollectionByServiceDev
 const SESSION_ITEM_BY_SERVICE_DEVICE_ROUTE = "/services/:service_id/devices/:device_id/sessions/:session_id";
 function DeviceItemByServiceDeviceDeleteRoute(request, response, next) {
 	console.log("DeviceItemByServiceDeviceDeleteRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
-	console.log("Â» session_id: " + request.params.session_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
+	console.log("» session_id: " + request.params.session_id);
 	response.status(200).end();
 }
 app.delete(SESSION_ITEM_BY_SERVICE_DEVICE_ROUTE, DeviceItemByServiceDeviceDeleteRoute);
 
 function DeviceItemByServiceDeviceGetRoute(request, response, next) {
 	console.log("DeviceItemByServiceDeviceGetRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
-	console.log("Â» session_id: " + request.params.session_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
+	console.log("» session_id: " + request.params.session_id);
 	response.status(200).end();
 }
 app.get(SESSION_ITEM_BY_SERVICE_DEVICE_ROUTE, DeviceItemByServiceDeviceGetRoute);
 
 function DeviceItemByServiceDeviceOptionsRoute(request, response, next) {
 	console.log("DeviceItemByServiceDeviceOptionsRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
-	console.log("Â» session_id: " + request.params.session_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
+	console.log("» session_id: " + request.params.session_id);
 	response.status(200).end();
 }
 app.options(SESSION_ITEM_BY_SERVICE_DEVICE_ROUTE, DeviceItemByServiceDeviceOptionsRoute);
 
 function DeviceItemByServiceDevicePatchRoute(request, response, next) {
 	console.log("DeviceItemByServiceDevicePatchRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
-	console.log("Â» session_id: " + request.params.session_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
+	console.log("» session_id: " + request.params.session_id);
 	response.status(200).end();
 }
 app.patch(SESSION_ITEM_BY_SERVICE_DEVICE_ROUTE, DeviceItemByServiceDevicePatchRoute);
 
 function DeviceItemByServiceDevicePostRoute(request, response, next) {
 	console.log("DeviceItemByServiceDevicePostRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
-	console.log("Â» session_id: " + request.params.session_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
+	console.log("» session_id: " + request.params.session_id);
 	response.status(200).end();
 }
 app.post(SESSION_ITEM_BY_SERVICE_DEVICE_ROUTE, DeviceItemByServiceDevicePostRoute);
 
 function DeviceItemByServiceDevicePutRoute(request, response, next) {
 	console.log("DeviceItemByServiceDevicePutRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
-	console.log("Â» session_id: " + request.params.session_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
+	console.log("» session_id: " + request.params.session_id);
 	response.status(200).end();
 }
 app.put(SESSION_ITEM_BY_SERVICE_DEVICE_ROUTE, DeviceItemByServiceDevicePutRoute);
@@ -1536,85 +1539,90 @@ app.put(SESSION_ITEM_BY_SERVICE_DEVICE_ROUTE, DeviceItemByServiceDevicePutRoute)
 const DATA_COLLECTION_BY_BEACON_DEVICE_ROUTE = "/beacons/:beacon_id/devices/:device_id/data";
 function DataCollectionByBeaconDeviceDeleteRoute(request, response, next) {
 	console.log("DataCollectionByBeaconDeviceDeleteRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
-	console.log("Â» device_id: " + request.params.device_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
+	console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.delete(DATA_COLLECTION_BY_BEACON_DEVICE_ROUTE, DataCollectionByBeaconDeviceDeleteRoute);
 
 function DataCollectionByBeaconDeviceGetRoute(request, response, next) {
 	console.log("DataCollectionByBeaconDeviceGetRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
-	console.log("Â» device_id: " + request.params.device_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
+	console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.get(DATA_COLLECTION_BY_BEACON_DEVICE_ROUTE, DataCollectionByBeaconDeviceGetRoute);
 
 function DataCollectionByBeaconDeviceOptionsRoute(request, response, next) {
 	//console.log("DataCollectionByBeaconDeviceOptionsRoute");
-	//console.log("Â» beacon_id: " + request.params.beacon_id);
-	//console.log("Â» device_id: " + request.params.device_id);
+	//console.log("» beacon_id: " + request.params.beacon_id);
+	//console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.options(DATA_COLLECTION_BY_BEACON_DEVICE_ROUTE, DataCollectionByBeaconDeviceOptionsRoute);
 
 function DataCollectionByBeaconDevicePatchRoute(request, response, next) {
 	console.log("DataCollectionByBeaconDevicePatchRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
-	console.log("Â» device_id: " + request.params.device_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
+	console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.patch(DATA_COLLECTION_BY_BEACON_DEVICE_ROUTE, DataCollectionByBeaconDevicePatchRoute);
 
-var distanceMap = [];
+
 function DataCollectionByBeaconDevicePostRoute(request, response, next) {
 	try {
-	//console.log("DataCollectionByBeaconDevicePostRoute");
-	let beacon_id = request.params.beacon_id;
-	//console.log("Â» beacon_id: " + beacon_id);
-	let device_id = request.params.device_id;
-	//console.log("Â» device_id: " + device_id);
-	var distance = request.body.distance;
-	distance = Math.abs(distance);
-	//console.log("Â» distance: " + distance);
+		console.log("DataCollectionByBeaconDevicePostRoute");
+		
+		let beacon_id = request.params.beacon_id;
+		console.log("» beacon_id: " + beacon_id);
 	
-	let index = distanceMap.findIndex( v => v.pid == beacon_id );
-	//console.log("Â» index: " + index);
-	if (index == INVALID_INDEX) {
-		var distanceObj = {};
-		distanceObj.pid = beacon_id;
-		distanceObj.distance = distance ;
-		distanceMap.push(distanceObj);
-	} else
-		distanceMap[index].distance = distance;
-
-	//console.log("Â» distanceMap: " + JSON.stringify(distanceMap));
-	var rv_url = null;
-	for(let item of distanceMap) {
-		let beaconidx = beacons.findIndex( beacon => beacon.publicIdentifier == item.pid );
-		//console.log("Â» beaconidx: " + beaconidx);
-		//console.log("Â» item.distance < beacons[beaconidx].distance: " + item.distance < beacons[beaconidx].distance);
-		let deviceidx = devices.findIndex( device => device.id == device_id );
-		let device = devices[deviceidx];
-		let connectedDevicesIdx = beacons[beaconidx].connectedDevices.findIndex( device => device.id == device_id );
-		if (item.distance < beacons[beaconidx].distance) {
-			if (connectedDevicesIdx == INVALID_INDEX) {
-				beacons[beaconidx].connectedDevices.push(device);
-				beacons[beaconidx].connectedUsers = beacons[beaconidx].connectedDevices.length;
-			}
-			rv_url = beacons[beaconidx].url;
-			//console.log("Â» item.distance: " + item.distance + " < beacons[beaconidx].distance: " + beacons[beaconidx].distance);
-			break;
-		} else if (connectedDevicesIdx != INVALID_INDEX) {
-			beacons[beaconidx].connectedDevices.splice(connectedDevicesIdx, 1);
-			beacons[beaconidx].connectedUsers = beacons[beaconidx].connectedDevices.length;
+		let device_id = request.params.device_id;
+		console.log("» device_id: " + device_id);
+		
+		var distance = request.body.distance;
+		distance = Math.abs(distance);
+		console.log("» distance: " + distance);
+	
+		console.log("» distanceMap: " + JSON.stringify(distanceMap));
+		
+		let index = distanceMap.findIndex( v => v.pid == beacon_id );
+		console.log("» index: " + index);
+		if (index == INVALID_INDEX) {
+			var distanceObj = {};
+			distanceObj.pid = beacon_id;
+			distanceObj.distance = distance ;
+			distanceMap.push(distanceObj);
+		} else
+			distanceMap[index].distance = distance;
+			console.log("» distance found: " + distance);
+			
+			var rv_url = null;
+			for(let item of distanceMap) {
+				let beaconidx = beacons.findIndex( beacon => beacon.publicIdentifier == item.pid );
+				console.log("» beaconidx: " + beaconidx);
+				console.log("» item.distance < beacons[beaconidx].distance: " + item.distance < beacons[beaconidx].distance);
+				let deviceidx = devices.findIndex( device => device.id == device_id );
+				let device = devices[deviceidx];
+				let connectedDevicesIdx = beacons[beaconidx].connectedDevices.findIndex( device => device.id == device_id );
+				if (item.distance < beacons[beaconidx].distance) {
+					if (connectedDevicesIdx == INVALID_INDEX) {
+						beacons[beaconidx].connectedDevices.push(device);
+						beacons[beaconidx].connectedUsers = beacons[beaconidx].connectedDevices.length;
+					}
+					rv_url = beacons[beaconidx].url;
+					console.log("» item.distance: " + item.distance + " < beacons[beaconidx].distance: " + beacons[beaconidx].distance);
+					break;
+				} else if (connectedDevicesIdx != INVALID_INDEX) {
+					beacons[beaconidx].connectedDevices.splice(connectedDevicesIdx, 1);
+					beacons[beaconidx].connectedUsers = beacons[beaconidx].connectedDevices.length;
+				}
 		}
-	}
-	if (rv_url == null)
-		rv_url = environments[0].url == null ? "https://www.luoggo.com" : environments[0].url;
-	//console.log("Â» rv_url: " + rv_url);
-	
-	return response.json({url:rv_url}).status(200);
+		if (rv_url == null)
+			rv_url = environments[0].url == null ? "https://www.luoggo.com" : environments[0].url;
+		//console.log("» rv_url: " + rv_url);
+		
+		return response.json({url:rv_url}).status(200);
 	} catch (exception) {
 		return response.json({url:"https://www.luoggo.com"}).status(200);
 	}
@@ -1623,8 +1631,8 @@ app.post(DATA_COLLECTION_BY_BEACON_DEVICE_ROUTE, DataCollectionByBeaconDevicePos
 
 function DataCollectionByBeaconDevicePutRoute(request, response, next) {
 	console.log("DataCollectionByBeaconDevicePutRoute");
-	console.log("Â» beacon_id: " + request.params.beacon_id);
-	console.log("Â» device_id: " + request.params.device_id);
+	console.log("» beacon_id: " + request.params.beacon_id);
+	console.log("» device_id: " + request.params.device_id);
 	response.status(200).end();
 }
 app.put(DATA_COLLECTION_BY_BEACON_DEVICE_ROUTE, DataCollectionByBeaconDevicePutRoute);
@@ -1633,54 +1641,54 @@ app.put(DATA_COLLECTION_BY_BEACON_DEVICE_ROUTE, DataCollectionByBeaconDevicePutR
 const DATA_COLLECTION_BY_SERVICE_DEVICE_SESSION_ROUTE = "/services/:service_id/devices/:device_id/sessions/:session_id/data";
 function DataCollectionByServiceDeviceSessionDeleteRoute(request, response, next) {
 	console.log("DataCollectionByServiceDeviceSessionDeleteRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
-	console.log("Â» session_id: " + request.params.session_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
+	console.log("» session_id: " + request.params.session_id);
 	response.status(200).end();
 }
 app.delete(DATA_COLLECTION_BY_SERVICE_DEVICE_SESSION_ROUTE, DataCollectionByServiceDeviceSessionDeleteRoute);
 
 function DataCollectionByServiceDeviceSessionGetRoute(request, response, next) {
 	console.log("DataCollectionByServiceDeviceSessionGetRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
-	console.log("Â» session_id: " + request.params.session_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
+	console.log("» session_id: " + request.params.session_id);
 	response.status(200).end();
 }
 app.get(DATA_COLLECTION_BY_SERVICE_DEVICE_SESSION_ROUTE, DataCollectionByServiceDeviceSessionGetRoute);
 
 function DataCollectionByServiceDeviceSessionOptionsRoute(request, response, next) {
 	console.log("DataCollectionByServiceDeviceSessionOptionsRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
-	console.log("Â» session_id: " + request.params.session_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
+	console.log("» session_id: " + request.params.session_id);
 	response.status(200).end();
 }
 app.options(DATA_COLLECTION_BY_SERVICE_DEVICE_SESSION_ROUTE, DataCollectionByServiceDeviceSessionOptionsRoute);
 
 function DataCollectionByServiceDeviceSessionPatchRoute(request, response, next) {
 	console.log("DataCollectionByServiceDeviceSessionPatchRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
-	console.log("Â» session_id: " + request.params.session_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
+	console.log("» session_id: " + request.params.session_id);
 	response.status(200).end();
 }
 app.patch(DATA_COLLECTION_BY_SERVICE_DEVICE_SESSION_ROUTE, DataCollectionByServiceDeviceSessionPatchRoute);
 
 function DataCollectionByServiceDeviceSessionPostRoute(request, response, next) {
 	console.log("DataCollectionByServiceDeviceSessionPostRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
-	console.log("Â» session_id: " + request.params.session_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
+	console.log("» session_id: " + request.params.session_id);
 	response.status(200).end();
 }
 app.post(DATA_COLLECTION_BY_SERVICE_DEVICE_SESSION_ROUTE, DataCollectionByServiceDeviceSessionPostRoute);
 
 function DataCollectionByServiceDeviceSessionPutRoute(request, response, next) {
 	console.log("DataCollectionByServiceDeviceSessionPutRoute");
-	console.log("Â» device_id: " + request.params.device_id);
-	console.log("Â» service_id: " + request.params.service_id);
-	console.log("Â» session_id: " + request.params.session_id);
+	console.log("» device_id: " + request.params.device_id);
+	console.log("» service_id: " + request.params.service_id);
+	console.log("» session_id: " + request.params.session_id);
 	response.status(200).end();
 }
 app.put(DATA_COLLECTION_BY_SERVICE_DEVICE_SESSION_ROUTE, DataCollectionByServiceDeviceSessionPutRoute);
@@ -1688,31 +1696,31 @@ app.put(DATA_COLLECTION_BY_SERVICE_DEVICE_SESSION_ROUTE, DataCollectionByService
 // Login
 function LoginPostRoute (request, response) {
 	console.log("LoginPostRoute: login requested");
-	console.log("Â» request.headers.authorization: " + request.headers.authorization);
+	console.log("» request.headers.authorization: " + request.headers.authorization);
 	let authorization_parts = request.headers.authorization?.split(" ");
 	let credentials_b64 = authorization_parts[1];
-	console.log("Â» credentials_b64: " + Buffer.from(credentials_b64, 'base64').toString());
+	console.log("» credentials_b64: " + Buffer.from(credentials_b64, 'base64').toString());
 	response.json({sessionId:123}).status(200).end();
 }
 app.post("/login", LoginPostRoute);
 
 function BeaconPostRoute (request, response) {
         console.log("BeaconPostRoute");
-        console.log("Â» publicId: " + request.body.id);
-        console.log("Â» status: " + request.body.status);
+        console.log("» publicId: " + request.body.id);
+        console.log("» status: " + request.body.status);
         response.json({message:"OK"}).status(200).end();
 }
 app.post("/beacon", BeaconPostRoute);
 
 function ServicePostRoute (request, response) {
 	console.log("ServicePostRoute");
-	console.log("Â» position: " + request.body.distance);
-	console.log("Â» publicId: " + request.body.id);
+	console.log("» position: " + request.body.distance);
+	console.log("» publicId: " + request.body.id);
 	if (request.body.distance > 1.1) {
-			console.log("Â» hateoas: " + JSON.stringify(hateoas.link("theme", {id: 2})));
+			console.log("» hateoas: " + JSON.stringify(hateoas.link("theme", {id: 2})));
 			response.json(hateoas.link("theme", {id: 2})).status(200).end();
 	} else {
-			console.log("Â» hateoas: " + JSON.stringify(hateoas.link("theme", {id: 1})));
+			console.log("» hateoas: " + JSON.stringify(hateoas.link("theme", {id: 1})));
 			response.json(hateoas.link("theme", {id: 1})).status(200).end();
 	}
 }
@@ -1751,7 +1759,7 @@ app.use('/views', express.static(__dirname + '/views'));
 function ThemeGetRoute (request, response) {
 	const themeId = request.params.themeId;
 	console.log("ThemeGetRoute");
-	console.log("Â» themeId: " + themeId);
+	console.log("» themeId: " + themeId);
 	response.render(themeId + '/index.ejs', {folder:'/views/' + themeId});
 }
 app.get("/themes/:themeId", ThemeGetRoute);
