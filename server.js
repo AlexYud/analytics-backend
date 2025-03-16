@@ -2,19 +2,19 @@
 const path = require('path');
 var express = require('express');
 var bodyParser = require('body-parser');
-var hateoas = require("hateoas")({baseUrl: "http://ec2-54-94-33-33.sa-east-1.compute.amazonaws.com:3000"});
+var hateoas = require("hateoas")({ baseUrl: "http://luoggo.com:2222" });
 var cors = require('cors');
 var app = express();
 
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 var corsOptionsRoute = {
-  origin: '*',
-  allowedHeaders: '*',
-  methods: "GET,PUT,PATCH,POST,DELETE",
-  optionsSuccessStatus: 200,
-  credentials: true,
-  preflightContinue: true
+	origin: '*',
+	allowedHeaders: '*',
+	methods: "GET,PUT,PATCH,POST,DELETE",
+	optionsSuccessStatus: 200,
+	credentials: true,
+	preflightContinue: true
 }
 app.use(cors(corsOptionsRoute))
 
@@ -27,7 +27,7 @@ class Merchant {
 	constructor(name) {
 		this.id = this.nextId();
 		this.name = name;
-		this.facilities = [];	
+		this.facilities = [];
 	}
 	nextId() {
 		merchantIndex++;
@@ -228,7 +228,7 @@ function BeaconItemGetRoute(request, response, next) {
 	console.log("» beacon_id: " + beacon_id);
 	let beaconIndex = beacons.findIndex(v => v.id == beacon_id);
 	if (beaconIndex == INVALID_INDEX) {
-		return response.status(400).json({message:"beaconIndex == INVALID_INDEX"});
+		return response.status(400).json({ message: "beaconIndex == INVALID_INDEX" });
 	}
 	response.json(beacons[beaconIndex]).status(200).end();
 	next();
@@ -296,7 +296,7 @@ function DeviceCollectionPostRoute(request, response, next) {
 	var name = JSON.stringify(request.body.name);
 	console.log("» name: " + name);
 	if (name == null)
-		return response.json({message:"name == null"}).status(404).end();
+		return response.json({ message: "name == null" }).status(404).end();
 	name = name.replaceAll("\"", "");
 	let index = beacons.findIndex(v => v.name == name);
 	var device = null;
@@ -469,11 +469,11 @@ function ServiceCollectionByBeaconGetRoute(request, response, next) {
 	console.log("ServiceCollectionByBeaconGetRoute");
 	let beacon_id = request.params.beacon_id;
 	console.log("» beacon_id: " + beacon_id);
-	
+
 	let beaconIndex = beacons.findIndex(v => v.id == beacon_id);
 	if (beaconIndex == INVALID_INDEX)
-		return response.status(400).json({message:"beaconIndex == INVALID_INDEX"});
-	
+		return response.status(400).json({ message: "beaconIndex == INVALID_INDEX" });
+
 	response.json(beacons[beaconIndex].services).status(200).end();
 }
 app.get(SERVICE_COLLECTION_BY_BEACON_ROUTE, ServiceCollectionByBeaconGetRoute);
@@ -495,32 +495,32 @@ app.patch(SERVICE_COLLECTION_BY_BEACON_ROUTE, ServiceCollectionByBeaconPatchRout
 function ServiceCollectionByBeaconPostRoute(request, response, next) {
 	console.log("ServiceCollectionByBeaconPostRoute");
 	let beacon_id = request.params.beacon_id;
-	console.log("» beacon_id: " + beacon_id);	
+	console.log("» beacon_id: " + beacon_id);
 	var name = request.body.name;
 	name = name.replaceAll("\"", "");
 	console.log("» name: " + name);
-	
-	let beaconIndex = beacons.findIndex(v => v.id == beacon_id);	
+
+	let beaconIndex = beacons.findIndex(v => v.id == beacon_id);
 	if (beaconIndex == INVALID_INDEX)
-		return response.status(400).json({message:"beaconIndex == INVALID_INDEX"});
+		return response.status(400).json({ message: "beaconIndex == INVALID_INDEX" });
 	else if (beacons[beaconIndex] == null)
-		return response.status(400).json({message:"beacons[beaconIndex] == null"});
+		return response.status(400).json({ message: "beacons[beaconIndex] == null" });
 
 	let serviceIndex = services.findIndex(v => v.name == name);
 	var service = null;
 	if (serviceIndex == INVALID_INDEX)
 		service = new Service(name);
 	else if (services[serviceIndex] == null)
-		return response.status(400).json({message:"services[serviceIndex] == null"});
+		return response.status(400).json({ message: "services[serviceIndex] == null" });
 	else {
 		service = services[serviceIndex];
 		beacons[beaconIndex].removeService(service);
 	}
 	beacons[beaconIndex].addService(service);
-	
-	for(var merchant of merchants) {
-		for(var facility of merchant.facilities) {
-			for(var environment of facility.environments) {
+
+	for (var merchant of merchants) {
+		for (var facility of merchant.facilities) {
+			for (var environment of facility.environments) {
 				let beaconIndex = environment.beacons.findIndex(v => v.id == beacon_id);
 				if (beaconIndex != INVALID_INDEX) {
 					environment.beacons[beaconIndex].removeService(service);
@@ -529,7 +529,7 @@ function ServiceCollectionByBeaconPostRoute(request, response, next) {
 			}
 		}
 	}
-	
+
 	response.json(service).status(200).end();
 }
 app.post(SERVICE_COLLECTION_BY_BEACON_ROUTE, ServiceCollectionByBeaconPostRoute);
@@ -581,26 +581,26 @@ function DeviceCollectionByBeaconPostRoute(request, response, next) {
 	console.log("» beacon_id: " + beacon_id);
 	let device_id = request.body.device_id;
 	console.log("» device_id: " + device_id);
-	
-	let beaconIndex = beacons.findIndex(v => v.id == beacon_id);	
+
+	let beaconIndex = beacons.findIndex(v => v.id == beacon_id);
 	if (beaconIndex == INVALID_INDEX)
-		return response.status(400).json({message:"beaconIndex == INVALID_INDEX"});
+		return response.status(400).json({ message: "beaconIndex == INVALID_INDEX" });
 	else if (beacons[beaconIndex] == null)
-		return response.status(400).json({message:"beacons[beaconIndex] == null"});
-	
+		return response.status(400).json({ message: "beacons[beaconIndex] == null" });
+
 	let deviceIndex = devices.findIndex(v => v.id == device_id);
 	if (deviceIndex == INVALID_INDEX)
-		return response.status(400).json({message:"deviceIndex == INVALID_INDEX"});
+		return response.status(400).json({ message: "deviceIndex == INVALID_INDEX" });
 	else if (devices[deviceIndex] == null)
-		return response.status(400).json({message:"devices[deviceIndex] == null"});
-	
+		return response.status(400).json({ message: "devices[deviceIndex] == null" });
+
 	devices[deviceIndex].status = Status.FOUND;
 	beacons[beaconIndex].devices.push(devices[deviceIndex]);
-	
+
 	var rv_environment = null;
-	for(var merchant of merchants) {
-		for(var facility of merchant.facilities) {
-			for(var environment of facility.environments) {
+	for (var merchant of merchants) {
+		for (var facility of merchant.facilities) {
+			for (var environment of facility.environments) {
 				let beaconIndex = environment.beacons.findIndex(v => v.id == beacon_id);
 				if (beaconIndex != INVALID_INDEX) {
 					environment.beacons[beaconIndex].removeDevice(devices[deviceIndex]);
@@ -610,7 +610,7 @@ function DeviceCollectionByBeaconPostRoute(request, response, next) {
 			}
 		}
 	}
-		
+
 	response.json(rv_environment).status(200).end();
 }
 app.post(DEVICE_COLLECTION_BY_BEACON_ROUTE, DeviceCollectionByBeaconPostRoute);
@@ -821,9 +821,9 @@ function BeaconCollectionByEnvironmentGetRoute(request, response, next) {
 	console.log("» environment_id: " + environment_id);
 	let environmentIndex = environments.findIndex(v => v.id == environment_id);
 	if (environmentIndex == INVALID_INDEX)
-		return response.status(400).json({message:"beaconIndex == INVALID_INDEX"});
+		return response.status(400).json({ message: "beaconIndex == INVALID_INDEX" });
 	else if (environments[environmentIndex] == null)
-		return response.status(400).json({message:"environments[environmentIndex] == null"});
+		return response.status(400).json({ message: "environments[environmentIndex] == null" });
 	response.json(environments[environmentIndex].beacons).status(200).end();
 }
 app.get(BEACON_COLLECTION_BY_ENVIRONMENT_ROUTE, BeaconCollectionByEnvironmentGetRoute);
@@ -848,21 +848,21 @@ function BeaconCollectionByEnvironmentPostRoute(request, response, next) {
 	console.log("» environment_id: " + environment_id);
 	let beacon_id = request.body.beacon_id;
 	console.log("» beacon_id: " + beacon_id);
-	
-	let environmentIndex = environments.findIndex(v => v.id == environment_id);	
+
+	let environmentIndex = environments.findIndex(v => v.id == environment_id);
 	let beaconIndex = beacons.findIndex(v => v.id == beacon_id);
 	if (environments[environmentIndex] == null)
 		response.status(400).end();
 	environments[environmentIndex].beacons.push(beacons[beaconIndex]);
-	
-	for(var merchant of merchants) {
-		for(var facility of merchant.facilities) {
+
+	for (var merchant of merchants) {
+		for (var facility of merchant.facilities) {
 			let environmentIndex = facility.environments.findIndex(v => v.id == environment_id);
 			if (environmentIndex > 0)
 				facility.environments[environmentIndex].beacons.push(beacons[beaconIndex]);
 		}
 	}
-	
+
 	response.json(environments[environmentIndex].beacons).status(200).end();
 }
 app.post(BEACON_COLLECTION_BY_ENVIRONMENT_ROUTE, BeaconCollectionByEnvironmentPostRoute);
@@ -962,19 +962,19 @@ function EnvironmentCollectionByFacilityPostRoute(request, response, next) {
 	console.log("» facility_id: " + facility_id);
 	let environment_id = request.body.environment_id;
 	console.log("» environment_id: " + environment_id);
-	
-	let facilityIndex = facilities.findIndex(v => v.id == facility_id);	
+
+	let facilityIndex = facilities.findIndex(v => v.id == facility_id);
 	let environmentIndex = environments.findIndex(v => v.id == environment_id);
 	if (facilities[facilityIndex] == null)
 		response.status(400).end();
 	facilities[facilityIndex].environments.push(environments[environmentIndex]);
-	
-	for(var merchant of merchants) {
+
+	for (var merchant of merchants) {
 		let facilityIndex = merchant.facilities.findIndex(v => v.id == facility_id);
 		if (facilityIndex > 0)
 			merchant.facilities[facilityIndex].environments.push(environments[environmentIndex]);
 	}
-	
+
 	response.json(facilities[facilityIndex].environments).status(200).end();
 
 }
@@ -1173,7 +1173,7 @@ function FacilityCollectionByMerchantPostRoute(request, response, next) {
 	let merchantIndex = merchants.findIndex(v => v.id == merchant_id);
 	let facilityIndex = facilities.findIndex(v => v.id == facility_id);
 	merchants[merchantIndex].addFacility(facilities[facilityIndex]);
-	
+
 	response.json(merchants[merchantIndex].facilities).status(200).end();
 }
 app.post(FACILITY_COLLECTION_BY_MERCHANT_ROUTE, FacilityCollectionByMerchantPostRoute);
@@ -1273,35 +1273,35 @@ function DeviceCollectionByServicePostRoute(request, response, next) {
 	console.log("» service_id: " + service_id);
 	let device_id = request.body.device_id;
 	console.log("» device_id: " + device_id);
-	
-	let beaconIndex = beacons.findIndex(v => v.id == beacon_id);	
+
+	let beaconIndex = beacons.findIndex(v => v.id == beacon_id);
 	if (beaconIndex == INVALID_INDEX)
-		return response.status(400).json({message:"beaconIndex == INVALID_INDEX"});
+		return response.status(400).json({ message: "beaconIndex == INVALID_INDEX" });
 	else if (beacons[beaconIndex] == null)
-		return response.status(400).json({message:"beacons[beaconIndex] == null"});
+		return response.status(400).json({ message: "beacons[beaconIndex] == null" });
 
 	let serviceIndex = services.findIndex(v => v.name == name);
 	if (serviceIndex == INVALID_INDEX)
-		return response.status(400).json({message:"serviceIndex == INVALID_INDEX"});
+		return response.status(400).json({ message: "serviceIndex == INVALID_INDEX" });
 	else if (services[serviceIndex] == null)
-		return response.status(400).json({message:"services[serviceIndex] == null"});
+		return response.status(400).json({ message: "services[serviceIndex] == null" });
 
 	let deviceIndex = devices.findIndex(v => v.id == device_id);
 	if (deviceIndex == INVALID_INDEX)
-		return response.status(400).json({message:"deviceIndex == INVALID_INDEX"});
+		return response.status(400).json({ message: "deviceIndex == INVALID_INDEX" });
 	else if (devices[deviceIndex] == null)
-		return response.status(400).json({message:"devices[deviceIndex] == null"});
+		return response.status(400).json({ message: "devices[deviceIndex] == null" });
 
 	devices[deviceIndex].status == Status.CONNECTED;
 	service = services[serviceIndex];
 	service.addDevice(devices[deviceIndex]);
-	
-	for(var merchant of merchants) {
-		for(var facility of merchant.facilities) {
-			for(var environment of facility.environments) {
-				for(var beacon of environment.beacons) {
+
+	for (var merchant of merchants) {
+		for (var facility of merchant.facilities) {
+			for (var environment of facility.environments) {
+				for (var beacon of environment.beacons) {
 					if (beacon.id == beacon_id)
-						for(var service of beacon.services) {
+						for (var service of beacon.services) {
 							if (service.id == service_id) {
 								service.addDevice(devices[deviceIndex]);
 								return response.json(service).status(200).end();
@@ -1514,54 +1514,54 @@ app.patch(DATA_COLLECTION_BY_BEACON_DEVICE_ROUTE, DataCollectionByBeaconDevicePa
 var distanceMap = [];
 function DataCollectionByBeaconDevicePostRoute(request, response, next) {
 	try {
-	//console.log("DataCollectionByBeaconDevicePostRoute");
-	let beacon_id = request.params.beacon_id;
-	//console.log("» beacon_id: " + beacon_id);
-	let device_id = request.params.device_id;
-	//console.log("» device_id: " + device_id);
-	var distance = request.body.distance;
-	distance = Math.abs(distance);
-	//console.log("» distance: " + distance);
-	
-	let index = distanceMap.findIndex( v => v.pid == beacon_id );
-	//console.log("» index: " + index);
-	if (index == INVALID_INDEX) {
-		var distanceObj = {};
-		distanceObj.pid = beacon_id;
-		distanceObj.distance = distance ;
-		distanceMap.push(distanceObj);
-	} else
-		distanceMap[index].distance = distance;
+		//console.log("DataCollectionByBeaconDevicePostRoute");
+		let beacon_id = request.params.beacon_id;
+		//console.log("» beacon_id: " + beacon_id);
+		let device_id = request.params.device_id;
+		//console.log("» device_id: " + device_id);
+		var distance = request.body.distance;
+		distance = Math.abs(distance);
+		//console.log("» distance: " + distance);
 
-	//console.log("» distanceMap: " + JSON.stringify(distanceMap));
-	var rv_url = null;
-	for(let item of distanceMap) {
-		let beaconidx = beacons.findIndex( beacon => beacon.publicIdentifier == item.pid );
-		//console.log("» beaconidx: " + beaconidx);
-		//console.log("» item.distance < beacons[beaconidx].distance: " + item.distance < beacons[beaconidx].distance);
-		let deviceidx = devices.findIndex( device => device.id == device_id );
-		let device = devices[deviceidx];
-		let connectedDevicesIdx = beacons[beaconidx].connectedDevices.findIndex( device => device.id == device_id );
-		if (item.distance < beacons[beaconidx].distance) {
-			if (connectedDevicesIdx == INVALID_INDEX) {
-				beacons[beaconidx].connectedDevices.push(device);
+		let index = distanceMap.findIndex(v => v.pid == beacon_id);
+		//console.log("» index: " + index);
+		if (index == INVALID_INDEX) {
+			var distanceObj = {};
+			distanceObj.pid = beacon_id;
+			distanceObj.distance = distance;
+			distanceMap.push(distanceObj);
+		} else
+			distanceMap[index].distance = distance;
+
+		//console.log("» distanceMap: " + JSON.stringify(distanceMap));
+		var rv_url = null;
+		for (let item of distanceMap) {
+			let beaconidx = beacons.findIndex(beacon => beacon.publicIdentifier == item.pid);
+			//console.log("» beaconidx: " + beaconidx);
+			//console.log("» item.distance < beacons[beaconidx].distance: " + item.distance < beacons[beaconidx].distance);
+			let deviceidx = devices.findIndex(device => device.id == device_id);
+			let device = devices[deviceidx];
+			let connectedDevicesIdx = beacons[beaconidx].connectedDevices.findIndex(device => device.id == device_id);
+			if (item.distance < beacons[beaconidx].distance) {
+				if (connectedDevicesIdx == INVALID_INDEX) {
+					beacons[beaconidx].connectedDevices.push(device);
+					beacons[beaconidx].connectedUsers = beacons[beaconidx].connectedDevices.length;
+				}
+				rv_url = beacons[beaconidx].url;
+				//console.log("» item.distance: " + item.distance + " < beacons[beaconidx].distance: " + beacons[beaconidx].distance);
+				break;
+			} else if (connectedDevicesIdx != INVALID_INDEX) {
+				beacons[beaconidx].connectedDevices.splice(connectedDevicesIdx, 1);
 				beacons[beaconidx].connectedUsers = beacons[beaconidx].connectedDevices.length;
 			}
-			rv_url = beacons[beaconidx].url;
-			//console.log("» item.distance: " + item.distance + " < beacons[beaconidx].distance: " + beacons[beaconidx].distance);
-			break;
-		} else if (connectedDevicesIdx != INVALID_INDEX) {
-			beacons[beaconidx].connectedDevices.splice(connectedDevicesIdx, 1);
-			beacons[beaconidx].connectedUsers = beacons[beaconidx].connectedDevices.length;
 		}
-	}
-	if (rv_url == null)
-		rv_url = environments[0].url == null ? "https://www.luoggo.com" : environments[0].url;
-	//console.log("» rv_url: " + rv_url);
-	
-	return response.json({url:rv_url}).status(200);
+		if (rv_url == null)
+			rv_url = environments[0].url == null ? "https://www.luoggo.com" : environments[0].url;
+		//console.log("» rv_url: " + rv_url);
+
+		return response.json({ url: rv_url }).status(200);
 	} catch (exception) {
-		return response.json({url:"https://www.luoggo.com"}).status(200);
+		return response.json({ url: "https://www.luoggo.com" }).status(200);
 	}
 }
 app.post(DATA_COLLECTION_BY_BEACON_DEVICE_ROUTE, DataCollectionByBeaconDevicePostRoute);
@@ -1631,68 +1631,68 @@ function DataCollectionByServiceDeviceSessionPutRoute(request, response, next) {
 app.put(DATA_COLLECTION_BY_SERVICE_DEVICE_SESSION_ROUTE, DataCollectionByServiceDeviceSessionPutRoute);
 
 // Login
-function LoginPostRoute (request, response) {
+function LoginPostRoute(request, response) {
 	console.log("LoginPostRoute: login requested");
 	console.log("» request.headers.authorization: " + request.headers.authorization);
 	let authorization_parts = request.headers.authorization?.split(" ");
 	let credentials_b64 = authorization_parts[1];
 	console.log("» credentials_b64: " + Buffer.from(credentials_b64, 'base64').toString());
-	response.json({sessionId:123}).status(200).end();
+	response.json({ sessionId: 123 }).status(200).end();
 }
 app.post("/login", LoginPostRoute);
 
-function BeaconPostRoute (request, response) {
-        console.log("BeaconPostRoute");
-        console.log("» publicId: " + request.body.id);
-        console.log("» status: " + request.body.status);
-        response.json({message:"OK"}).status(200).end();
+function BeaconPostRoute(request, response) {
+	console.log("BeaconPostRoute");
+	console.log("» publicId: " + request.body.id);
+	console.log("» status: " + request.body.status);
+	response.json({ message: "OK" }).status(200).end();
 }
 app.post("/beacon", BeaconPostRoute);
 
-function ServicePostRoute (request, response) {
-        console.log("ServicePostRoute");
-        console.log("» position: " + request.body.distance);
-        console.log("» publicId: " + request.body.id);
-        if (request.body.distance > 1.1) {
-                console.log("» hateoas: " + JSON.stringify(hateoas.link("theme", {id: 2})));
-                response.json(hateoas.link("theme", {id: 2})).status(200).end();
-        } else {
-                console.log("» hateoas: " + JSON.stringify(hateoas.link("theme", {id: 1})));
-                response.json(hateoas.link("theme", {id: 1})).status(200).end();
-        }
+function ServicePostRoute(request, response) {
+	console.log("ServicePostRoute");
+	console.log("» position: " + request.body.distance);
+	console.log("» publicId: " + request.body.id);
+	if (request.body.distance > 1.1) {
+		console.log("» hateoas: " + JSON.stringify(hateoas.link("theme", { id: 2 })));
+		response.json(hateoas.link("theme", { id: 2 })).status(200).end();
+	} else {
+		console.log("» hateoas: " + JSON.stringify(hateoas.link("theme", { id: 1 })));
+		response.json(hateoas.link("theme", { id: 1 })).status(200).end();
+	}
 }
 app.post("/service", ServicePostRoute);
 
-hateoas.registerLinkHandler("root", function() {
-    return {
-        "self": "/",
-        "themes": "/themes"
-    };
+hateoas.registerLinkHandler("root", function () {
+	return {
+		"self": "/",
+		"themes": "/themes"
+	};
 });
 
-hateoas.registerLinkHandler("theme", function(theme) {
-    var links = {
-        "self": "/themes/" + theme.id,
-    };
- 
-    return links;
+hateoas.registerLinkHandler("theme", function (theme) {
+	var links = {
+		"self": "/themes/" + theme.id,
+	};
+
+	return links;
 });
 
 // TODO Rever
-function ExperiencePostRoute (request, response) {
-        console.log("ExperiencePostRoute");
-        response.json({message:"OK"}).status(200).end();
+function ExperiencePostRoute(request, response) {
+	console.log("ExperiencePostRoute");
+	response.json({ message: "OK" }).status(200).end();
 }
 app.post("/experience", ExperiencePostRoute);
 
-function ThemeGetRoute (request, response) {
-        const themeId = request.params.themeId;
-        console.log("ThemeGetRoute");
-        console.log("» themeId: " + themeId);
-        response.sendFile(path.join(__dirname, '/public/' + themeId + '.html'));
+function ThemeGetRoute(request, response) {
+	const themeId = request.params.themeId;
+	console.log("ThemeGetRoute");
+	console.log("» themeId: " + themeId);
+	response.sendFile(path.join(__dirname, '/public/' + themeId + '.html'));
 }
 app.get("/themes/:themeId", ThemeGetRoute);
 
 var listener = app.listen(process.env.PORT, function () {
-        console.log('Indoor Analytics listening on port ' + listener.address().port);
+	console.log('Indoor Analytics listening on port ' + listener.address().port);
 });
