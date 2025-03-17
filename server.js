@@ -1697,7 +1697,7 @@ app.put(DATA_COLLECTION_BY_SERVICE_DEVICE_SESSION_ROUTE, DataCollectionByService
 function LoginPostRoute(request, response) {
 	console.log("LoginPostRoute: login requested");
 	console.log("� request.headers.authorization: " + request.headers.authorization);
-	let authorization_parts = request.headers.authorization?.split(" ");
+	let authorization_parts = request.headers.authorization.split(" ");
 	let credentials_b64 = authorization_parts[1];
 	console.log("� credentials_b64: " + Buffer.from(credentials_b64, 'base64').toString());
 	response.json({ sessionId: 123 }).status(200).end();
