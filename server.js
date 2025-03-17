@@ -1,4 +1,4 @@
-const {PORT = 2222} = process.env;
+const {PORT = 80} = process.env;
 const path = require('path');
 const assert = require('assert');
 var express = require('express');
@@ -1764,6 +1764,6 @@ function ThemeGetRoute (request, response) {
 }
 app.get("/themes/:themeId", ThemeGetRoute);
 
-var listener = app.listen(PORT, function () {
+var listener = app.listen(PORT, '0.0.0.0', function () {
 	console.log('Indoor Analytics listening on port ' + listener.address().port);
 });
