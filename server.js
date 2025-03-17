@@ -1,4 +1,4 @@
-const {PORT = 443} = process.env;
+const {PORT = 2222} = process.env;
 const path = require('path');
 const assert = require('assert');
 var express = require('express');
