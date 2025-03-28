@@ -1697,6 +1697,8 @@ app.get("/", (req, res) => {
 	res.send("Server is running!");
   });
 
+  app.use(express.static(path.join(__dirname, 'public')));
+
 var listener = app.listen(PORT, function () {
 	console.log('Indoor Analytics listening on port ' + listener.address().port);
 });
