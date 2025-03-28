@@ -1693,6 +1693,10 @@ function ThemeGetRoute(request, response) {
 }
 app.get("/themes/:themeId", ThemeGetRoute);
 
-var listener = app.listen(PORT, "0.0.0.0", function () {
+app.get("/", (req, res) => {
+	res.send("Server is running!");
+  });
+
+var listener = app.listen(PORT, function () {
 	console.log('Indoor Analytics listening on port ' + listener.address().port);
 });
