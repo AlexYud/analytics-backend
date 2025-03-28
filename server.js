@@ -14,7 +14,7 @@ var corsOptionsRoute = {
 	methods: "GET,PUT,PATCH,POST,DELETE",
 	optionsSuccessStatus: 200,
 	credentials: true,
-	preflightContinue: true
+	preflightContinue: false
 }
 app.use(cors(corsOptionsRoute))
 
